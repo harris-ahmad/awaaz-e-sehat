@@ -6,6 +6,7 @@ class CustomUserTests(TestCase):
     '''
     Tests for CustomUser model
     '''
+
     def test_create_user(self):
         '''
         Tests creating a new user
@@ -39,4 +40,3 @@ class CustomUserTests(TestCase):
         self.assertTrue(superuser.is_active)
         self.assertTrue(superuser.is_staff)
         self.assertTrue(superuser.is_superuser)
-        

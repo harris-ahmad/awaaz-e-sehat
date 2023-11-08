@@ -26,7 +26,10 @@ SECRET_KEY = 'django-insecure-g56d-gqx(5b^v$r#7@4+*(efn*8_qi1u*d2z!l3#b3g1mrwyar
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '192.168.0.11',
+]
 
 
 # Application definition
@@ -129,3 +132,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # so django knows that we are using our own custom user model
 AUTH_USER_MODEL = 'users.CustomUser'
+
+# redirect the user to this page after login
+LOGIN_REDIRECT_URL = 'home'
+
+# redirect the user to this page after logout
+LOGOUT_REDIRECT_URL = 'home'
