@@ -62,7 +62,7 @@ ROOT_URLCONF = 'awaaz_e_sehat.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'awaaz_e_sehat/templates')],
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,6 +124,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# naming it to staticfiles because it'll be easier to differentiate
+# development static files from production static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_FINDERS = [
+    # looks within the STATICFILES_DIRS which we set to awaaz_e_sehat/static
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    # looks within the installed apps for static files
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
