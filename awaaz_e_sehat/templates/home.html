@@ -1,0 +1,15 @@
+{% extends '_base.html' %}
+
+{% block title %}Awaaz-e-Sehat{% endblock title %}
+
+{% block content %}
+    <h1>Welcome to Awaaz-e-Sehat</h1>
+    {% if user.is_authenticated %}
+        Hi {{ user.email }}!
+        <a href="{% url 'logout' %}">Log Out</a>
+    {% else %}
+        <p>You are not logged in!</p>
+        <a href="{% url 'login' %}">Log In</a>
+        <a href="{% url 'signup' %}">Sign Up</a>
+    {% endif %}
+{% endblock content %}
