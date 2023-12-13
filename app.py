@@ -6,8 +6,7 @@ import bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-from models import User, Nurse, Patient
-from webforms import LoginForm, RegisterForm, ForgotPasswordForm, ChangePasswordForm, PatientForm, PatientSearchForm
+from webforms import LoginForm, RegisterForm, ForgotPasswordForm, ChangePasswordForm, PatientForm, PatientSearchForm, UpdateEmployeeProfile
 
 app = Flask(
     __name__,
@@ -66,7 +65,6 @@ class Doctor(db.Model, UserMixin):
     user = db.relationship('User', backref='doctor', lazy='joined')
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-# add a patient model 
 class Patient(db.Model):
     __tablename__ = 'patients'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -99,7 +97,6 @@ class Patient(db.Model):
     def bmi(self, bmi):
         self.bmi = bmi
 
-
 login_manager = LoginManager(app)
 login_manager.login_view = 'nurse_login'
 
@@ -121,7 +118,6 @@ def server_error(e):
 def home():
     return render_template('index.html')
 
-
 ####################### NURSE ROUTES #######################
 @app.route('/nurse/dashboard')
 @login_required
@@ -134,7 +130,6 @@ def nurse_dashboard():
         form = PatientSearchForm()
         return render_template('dashboard.html', employee_code=employee_code, first_name=first_name, curr_date=curr_date, curr_time=curr_time, form=form)
     return redirect(url_for('nurse_login'))
-
 
 @app.route('/nurse/register', methods=['GET', 'POST'])
 def nurse_register():
@@ -161,9 +156,10 @@ def nurse_register():
         return redirect(url_for('nurse_login'))
     return render_template('signup.html', form=form)
 
-
 @app.route('/nurse/login', methods=['GET', 'POST'])
 def nurse_login():
+    if 'employee_code' in session:
+        return redirect(url_for('nurse_dashboard'))
     form = LoginForm()
     if form.validate_on_submit():
         print(form.employee_code.data, form.password.data)
@@ -175,7 +171,6 @@ def nurse_login():
         else:
             flash('Invalid employee code or password!', category='warning')
     return render_template('login.html', form=form)
-
 
 @app.route('/nurse/vitals', methods=['GET', 'POST'])
 @login_required
@@ -224,19 +219,18 @@ def nurse_vitals():
 def nurse_thank_you():
     return render_template('thank-you.html')
 
-@app.route('/nurse/search', methods=['GET', 'POST'])
+@app.route('/nurse/search', methods=['POST'])
 @login_required
 def nurse_search():
     form = PatientSearchForm()
-    searched = form.searched.data
-    patients = Patient.query.all()
     if form.validate_on_submit():
-        patients = Patient.query.filter_by(patient_name=form.searched.data).all()
-    return render_template(
-        'patients.html',
-        patients=patients,
-        searched=searched,
-    )
+        print(form.searched.data)
+        patient = Patient.query.filter_by(medical_record_number=form.searched.data).first()
+        if patient:
+            return redirect(url_for('nurse_patient', medical_record_number=patient.medical_record_number))
+        flash('Patient not found!', 'danger')
+        return redirect(url_for('nurse_search'))
+    return redirect(url_for('nurse_dashboard'))
 
 @app.route('/nurse/patients/<int:medical_record_number>')
 @login_required
@@ -249,7 +243,6 @@ def nurse_patient(medical_record_number):
     nurse_name = User.query.filter_by(employee_code=session['employee_code']).first()
     nurse_name = nurse_name.full_name.split(' ')[0].capitalize()
     return render_template('patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
-
 
 @app.route('/nurse/forgot-password', methods=['GET', 'POST'])
 @login_required
@@ -266,10 +259,25 @@ def nurse_forgot_password():
             flash('Invalid old password!', 'danger')
     return render_template('forgot-password.html', form=form)
 
+@app.route('/nurse/profile/update', methods=['GET', 'POST'])
+@login_required
+def nurse_update_profile():
+    form = UpdateEmployeeProfile()
+    curr_full_name, curr_employee_code = '', ''
+    if form.validate_on_submit():
+        profile = User.query.filter_by(employee_code=session['employee_code']).first()
+        curr_full_name, curr_employee_code = profile.full_name, profile.employee_code
+        profile.full_name = form.full_name.data
+        profile.employee_code = form.employee_code.data
+        db.session.commit()
+        session['employee_code'] = profile.employee_code
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('nurse_dashboard'))
+    return render_template('update-profile.html', form=form, full_name=curr_full_name, employee_code=curr_employee_code)
 
 @app.route('/nurse/profile')
 @login_required
-def nurse_update_profile():
+def nurse_profile():
     pass
 
 @app.route('/nurse/change-password', methods=['GET', 'POST'])
