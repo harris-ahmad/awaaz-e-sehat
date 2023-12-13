@@ -10,33 +10,28 @@ from flask import (
 
 from flask_login import (
     LoginManager, 
-    UserMixin, 
     login_user, 
     logout_user, 
     login_required, 
     current_user
 )
 
-from flask_wtf import FlaskForm
-
-from wtforms import (
-    StringField, 
-    PasswordField, 
-    SubmitField, 
-    IntegerField, 
-    SelectField, 
-    DateTimeField
+from webforms import (
+    LoginForm, 
+    RegisterForm, 
+    ForgotPasswordForm, 
+    ChangePasswordForm, 
+    PatientForm, 
+    PatientSearchForm
 )
 
-from wtforms.validators import (
-    DataRequired, 
-    EqualTo, 
-    Length, 
-    Optional
+from models import (
+    User,
+    Nurse,
+    Patient
 )
 
 import datetime
-import bcrypt
 
 # database
 from flask_sqlalchemy import SQLAlchemy
@@ -64,130 +59,12 @@ app.register_blueprint(home_blueprint, url_prefix='/')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# database models
-class User(db.Model, UserMixin):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    employee_code = db.Column(db.String(100), unique=True)
-    full_name = db.Column(db.String(100), nullable=False)
-    password_hash = db.Column(db.String(100))
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-
-    @property
-    def password(self):
-        raise AttributeError('Password is not a readable attribute.')
-    
-    @password.setter
-    def password(self, password):
-        self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
-    @staticmethod
-    def verify_password(password_hash, password):
-        same_password = bcrypt.checkpw(password=password.encode('utf-8'), hashed_password=password_hash)
-        return same_password
-
-class Nurse(db.Model, UserMixin):
-    __tablename__ = 'nurses'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship('User', backref='nurse', lazy='joined')
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-
-class Doctor(db.Model, UserMixin):
-    __tablename__ = 'doctors'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship('User', backref='doctor', lazy='joined')
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-
-# add a patient model 
-class Patient(db.Model):
-    __tablename__ = 'patients'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    medical_record_number = db.Column(db.String(100), nullable=False)
-    patient_name = db.Column(db.String(100), nullable=False)
-    patient_cnic = db.Column(db.String(100), nullable=False)
-    patient_age = db.Column(db.Integer, nullable=False)
-    patient_type = db.Column(db.String(100), nullable=False)
-    visit_number = db.Column(db.Integer, nullable=False, default=1)
-    weight_kg = db.Column(db.Float)
-    height_cm = db.Column(db.Float)
-    b_bp_sys = db.Column(db.Integer)
-    b_bp_dia = db.Column(db.Integer)
-    temperature = db.Column(db.Float)
-    pulse = db.Column(db.Integer)
-    bsr = db.Column(db.Integer)
-    urine_albumin = db.Column(db.String(100))
-    hb = db.Column(db.Float)
-    spO2 = db.Column(db.Integer)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    bmi = db.Column(db.Float)
-
-    @property
-    def bmi(self):
-        if self.weight_kg and self.height_cm:
-            return round(self.weight_kg / ((self.height_cm / 100) ** 2), 2)
-        return None
-    
-    @bmi.setter
-    def bmi(self, bmi):
-        self.bmi = bmi
-
 login_manager = LoginManager(app)
 login_manager.login_view = 'nurse_login'
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
-
-class LoginForm(FlaskForm):
-    employee_code = StringField('Employee Code', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Log In')
-
-class RegisterForm(FlaskForm):
-    employee_code = StringField('Employee Code', validators=[DataRequired()])
-    full_name = StringField('Full Name', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Register')
-
-class ForgotPasswordForm(FlaskForm):
-    employee_code = StringField('Employee Code', validators=[DataRequired()])
-    old_password = PasswordField('Old Password', validators=[DataRequired()])
-    new_password = PasswordField('New Password', validators=[DataRequired(), EqualTo('confirm_password')])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-class ChangePasswordForm(FlaskForm):
-    current_password = PasswordField('Old Password', validators=[DataRequired()])
-    new_password = PasswordField('New Password', validators=[DataRequired(), EqualTo('confirm_password')])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-class PatientForm(FlaskForm):
-    medical_record_number = StringField('Medical Record Number', validators=[DataRequired()])
-    patient_name = StringField('Patient Name', validators=[DataRequired()])
-    patient_cnic = StringField('Patient CNIC', validators=[Length(min=13, max=13)])
-    patient_age = IntegerField('Patient Age', validators=[DataRequired()])
-    patient_type = SelectField('Patient Type', choices=[('general', 'General'), ('private', 'Private'), \
-                                    ('employee', 'Employee'), ('company_cases', 'Company Cases')], validators=[DataRequired()])
-    weight_kg = IntegerField('Weight (kg)', validators=[Optional()])
-    height_cm = IntegerField('Height (cm)', validators=[Optional()])
-    b_bp_sys = IntegerField('Blood Pressure (Systolic)', validators=[Optional()])
-    b_bp_dia = IntegerField('Blood Pressure (Diastolic)', validators=[Optional()])
-    temperature = IntegerField('Temperature', validators=[Optional()])
-    pulse = IntegerField('Pulse', validators=[Optional()])
-    bsr = IntegerField('BSR', validators=[Optional()])
-    urine_albumin = SelectField('Urine Albumin', choices=[('1+', '1+ (30 mg/dL)'), ('2+', '2+ (100 mg/dL)'), \
-                                    ('3+', '3+ (300 mg/dL)'), ('4+', '4+ (1000 mg/dL)')], validators=[Optional()])
-    hb = IntegerField('HB', validators=[Optional()])
-    spO2 = IntegerField('SpO2', validators=[Optional()])
-    created_at = DateTimeField('Date', default=datetime.datetime.utcnow)
-    submit = SubmitField('Submit')
-
-class PatientSearchForm(FlaskForm):
-    searched = StringField('Searched', validators=[DataRequired()])
-    submit = SubmitField('Search')
 
 @app.errorhandler(404)
 def page_not_found(e):
