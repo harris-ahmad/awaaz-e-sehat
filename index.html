@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Awaaz-e-Sehat</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="manifest" href="/manifest.json?h=ca6459a025bd0999ef3c8c1809f5ee53">
+    <link rel="stylesheet" href="/assets/css/styles.min.css?h=11c9d96cdcd76982b64d0cd24fe2414d">
+</head>
+
+<body>
+    <div class="container d-flex flex-column justify-content-center align-items-center vh-100">
+        <h1>Awaaz-e-Sehat</h1>
+        <p>Please click on the corresponding button below based on your role:</p>
+        <div class="btn-group-vertical" role="group"><a class="btn btn-primary btn-lg" role="button"
+                href="{{ url_for('nurse_login') }}" style="margin-bottom: 10px;">I am a Nurse</a><a
+                class="btn btn-secondary btn-lg" role="button" href="/doctor/login">I am a Doctor</a></div>
+    </div>
+    <style>
+        @media only screen and (max-width: 600px) {
+            .btn-group-vertical .btn {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/script.min.js?h=28847b94f91e1709e33b4e0df5b55930"></script>
+</body>
+
+</html>

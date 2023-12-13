@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Include Bootstrap CSS for styling and responsiveness -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Patient</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Navigation Buttons -->
+        <div class="d-flex justify-content-between mb-3">
+            <a href="{{ url_for('nurse_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+            <a href="{{ url_for('nurse_logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+
+        
+        <!-- generate flashed messages and clear them out after 2 seconds -->
+        <!-- {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %} -->
+
+
+        <h2>Patient Information</h2>
+        <form method="POST" action="{{ url_for('nurse_vitals') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.medical_record_number.label(class="form-label") }}
+                {{ form.medical_record_number(class="form-control") }}
+                {% if form.medical_record_number.errors %}
+                    <ul class="errors">
+                        {% for error in form.medical_record_number.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.patient_name.label(class="form-label") }}
+                {{ form.patient_name(class="form-control") }}
+            </div>
+
+            <div class="form-group">
+                {{ form.patient_cnic.label(class="form-label") }}
+                {{ form.patient_cnic(class="form-control") }}
+                {% if form.patient_cnic.errors %}
+                    <ul class="errors">
+                        {% for error in form.patient_cnic.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    {{ form.patient_age.label(class="form-label") }}
+                    {{ form.patient_age(class="form-control") }}
+                    {% if form.patient_age.errors %}
+                        <ul class="errors">
+                            {% for error in form.patient_age.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-6">
+                    {{ form.patient_type.label(class="form-label") }}
+                    {{ form.patient_type(class="form-control") }}
+                    {% if form.patient_type.errors %}
+                        <ul class="errors">
+                            {% for error in form.patient_type.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h2>Vitals Information</h2>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    {{ form.weight_kg.label(class="form-label") }}
+                    {{ form.weight_kg(class="form-control") }}
+                    {% if form.weight_kg.errors %}
+                        <ul class="errors">
+                            {% for error in form.weight_kg.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-6">
+                    {{ form.height_cm.label(class="form-label") }}
+                    {{ form.height_cm(class="form-control") }}
+                    {% if form.height_cm.errors %}
+                        <ul class="errors">
+                            {% for error in form.height_cm.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    {{ form.b_bp_sys.label(class="form-label") }}
+                    {{ form.b_bp_sys(class="form-control") }}
+                    {% if form.b_bp_sys.errors %}
+                        <ul class="errors">
+                            {% for error in form.b_bp_sys.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-6">
+                    {{ form.b_bp_dia.label(class="form-label") }}
+                    {{ form.b_bp_dia(class="form-control") }}
+                    {% if form.b_bp_dia.errors %}
+                        <ul class="errors">
+                            {% for error in form.b_bp_dia.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    {{ form.temperature.label(class="form-label") }}
+                    {{ form.temperature(class="form-control") }}
+                    {% if form.temperature.errors %}
+                        <ul class="errors">
+                            {% for error in form.temperature.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-4">
+                    {{ form.pulse.label(class="form-label") }}
+                    {{ form.pulse(class="form-control") }}
+                    {% if form.pulse.errors %}
+                        <div class="error">{{ form.pulse.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-4">
+                    {{ form.bsr.label(class="form-label") }}
+                    {{ form.bsr(class="form-control") }}
+                    {% if form.bsr.errors %}
+                        <ul class="errors">
+                            {% for error in form.bsr.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    {{ form.urine_albumin.label(class="form-label") }}
+                    {{ form.urine_albumin(class="form-control") }}
+                    {% if form.urine_albumin.errors %}
+                        <ul class="errors">
+                            {% for error in form.urine_albumin.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-4">
+                    {{ form.hb.label(class="form-label") }}
+                    {{ form.hb(class="form-control") }}
+                    {% if form.hb.errors %}
+                        <ul class="errors">
+                            {% for error in form.hb.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-4">
+                    {{ form.spO2.label(class="form-label") }}
+                    {{ form.spO2(class="form-control") }}
+                    {% if form.spO2.errors %}
+                        <ul class="errors">
+                            {% for error in form.spO2.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div>
+                {{ form.submit(class="btn btn-primary", id="submit", disabled="disabled") }}
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Disable submit button until all fields are filled
+        var submit = document.getElementById("submit");
+        var inputs = document.getElementsByTagName("input");
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].addEventListener("keyup", function() {
+                if (this.value.length > 0) {
+                    submit.disabled = false;
+                } else {
+                    submit.disabled = true;
+                }
+            });
+        }
+
+        // Disable submit button if form is invalid
+        var form = document.getElementsByTagName("form")[0];
+        form.addEventListener("submit", function() {
+            submit.disabled = true;
+        });
+    </script>
+
+    <!-- Optional JavaScript and jQuery for Bootstrap components to work -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

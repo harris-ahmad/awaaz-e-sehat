@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Thank You</title>
+    <style>
+        .thank-you-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 56px); /* Adjust height taking navbar into account */
+            text-align: center;
+        }
+        .thank-you-page h1 {
+            margin-bottom: 0.5em;
+        }
+        .thank-you-page .options {
+            margin-top: 1em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{{ url_for('nurse_dashboard') }}">Awaaz-e-Sehat</a>
+        <div class="ml-auto">
+            <a href="{{ url_for('nurse_logout') }}" class="btn btn-outline-danger my-2 my-sm-0">Logout</a>
+        </div>
+    </nav>
+
+    <div class="thank-you-page">
+        <h1>Thank You!</h1>
+        <p>Your submission has been recorded successfully.</p>
+        <div class="options">
+            <a href="{{ url_for('nurse_dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+            <p>or</p>
+            <a href="{{ url_for('nurse_logout') }}" class="btn btn-secondary">Logout</a>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
