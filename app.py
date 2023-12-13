@@ -1,41 +1,12 @@
-from flask import (
-    Flask, 
-    render_template, 
-    redirect, 
-    url_for, 
-    flash, 
-    session, 
-    Blueprint
-)
-
-from flask_login import (
-    LoginManager, 
-    login_user, 
-    logout_user, 
-    login_required, 
-    current_user
-)
-
-from webforms import (
-    LoginForm, 
-    RegisterForm, 
-    ForgotPasswordForm, 
-    ChangePasswordForm, 
-    PatientForm, 
-    PatientSearchForm
-)
-
-from models import (
-    User,
-    Nurse,
-    Patient
-)
-
+from flask import Flask, render_template, redirect, url_for, flash, session, Blueprint
+from flask_login import LoginManager, login_user, logout_user, login_required
 import datetime
 
-# database
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+
+from models import User, Nurse, Patient
+from webforms import LoginForm, RegisterForm, ForgotPasswordForm, ChangePasswordForm, PatientForm, PatientSearchForm
 
 app = Flask(
     __name__,
@@ -64,7 +35,7 @@ login_manager.login_view = 'nurse_login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    return User.query.get(int(user_id))
 
 @app.errorhandler(404)
 def page_not_found(e):
