@@ -14,18 +14,16 @@
             <a href="{{ url_for('nurse_logout') }}" class="btn btn-danger">Logout</a>
         </div>
 
-        
-        <!-- generate flashed messages and clear them out after 2 seconds -->
-        <!-- {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %} -->
-
+        <!-- Flash messages -->
+        <div id="flashed-messages">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-info">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
 
         <h2>Patient Information</h2>
         <form method="POST" action="{{ url_for('nurse_vitals') }}">
@@ -230,6 +228,14 @@
         form.addEventListener("submit", function() {
             submit.disabled = true;
         });
+
+        // Get the flashed messages container
+        const flashedMessages = document.getElementById('flashed-messages');
+
+        // Remove the flashed messages after 3 seconds
+        setTimeout(() => {
+            flashedMessages.innerHTML = '';
+        }, 3000);
     </script>
 
     <!-- Optional JavaScript and jQuery for Bootstrap components to work -->
