@@ -19,6 +19,19 @@
 </head>
 <body>
     <div class="container mt-5">
+
+        <!-- get flashed messages -->
+        <div id="flashed-messages">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-info">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+
         <a href="{{ url_for('nurse_dashboard') }}" class="btn btn-primary mb-3">
             <i class="fas fa-arrow-left"></i> Back to Dashboard
         </a>
@@ -40,6 +53,16 @@
             {% endfor %}
         </div>
     </div>
+
+    <script>
+        // Get the flashed messages container
+        const flashedMessages = document.getElementById('flashed-messages');
+
+        // Remove the flashed messages after 5 seconds
+        setTimeout(() => {
+            flashedMessages.innerHTML = '';
+        }, 3000);
+    </script>
 
     <!-- Optional Bootstrap JavaScript -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
