@@ -39,6 +39,11 @@ class ChangePasswordForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class UpdateEmployeeProfile(FlaskForm):
+    full_name = StringField('Full Name', validators=[DataRequired()])
+    employee_code = StringField('Employee Code', validators=[DataRequired()])
+    submit = SubmitField('Update')
+
 class PatientForm(FlaskForm):
     medical_record_number = StringField('Medical Record Number', validators=[DataRequired()])
     patient_name = StringField('Patient Name', validators=[DataRequired()])
