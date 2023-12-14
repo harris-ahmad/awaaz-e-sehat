@@ -212,7 +212,7 @@ def nurse_vitals():
 def nurse_thank_you():
     return render_template('thank-you.html')
 
-@app.route('/nurse/search', methods=['POST'])
+@app.route('/nurse/search', methods=['POST', 'GET'])
 @login_required
 def nurse_search():
     form = PatientSearchForm()
@@ -272,17 +272,20 @@ def nurse_forgot_password():
 @login_required
 def nurse_update_profile():
     form = UpdateEmployeeProfile()
-    curr_full_name, curr_employee_code = '', ''
+    profile = User.query.filter_by(employee_code=session['employee_code']).first()
+    curr_full_name, curr_employee_code = profile.full_name, profile.employee_code
     if form.validate_on_submit():
-        profile = User.query.filter_by(employee_code=session['employee_code']).first()
-        curr_full_name, curr_employee_code = profile.full_name, profile.employee_code
+        existing_user = User.query.filter_by(employee_code=form.employee_code.data).first()
+        if existing_user:
+            flash('Employee code already exists!', 'danger')
+            return redirect(url_for('nurse_update_profile'))
         profile.full_name = form.full_name.data
         profile.employee_code = form.employee_code.data
         db.session.commit()
-        session['employee_code'] = profile.employee_code
+        session['employee_code'] = form.employee_code.data
         flash('Profile updated successfully!', 'success')
         return redirect(url_for('nurse_dashboard'))
-    return render_template('update-profile.html', form=form, full_name=curr_full_name, employee_code=curr_employee_code)
+    return render_template('update-profile.html', form=form, curr_full_name=curr_full_name, curr_employee_code=curr_employee_code)
 
 @app.route('/nurse/profile')
 @login_required
