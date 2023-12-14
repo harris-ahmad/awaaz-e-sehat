@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash, session, Blu
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin
 import datetime
 import bcrypt
+import weasyprint
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -68,7 +69,7 @@ class Doctor(db.Model, UserMixin):
 class Patient(db.Model):
     __tablename__ = 'patients'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    medical_record_number = db.Column(db.String(100), nullable=False)
+    medical_record_number = db.Column(db.String(100), nullable=False, primary_key=True)
     patient_name = db.Column(db.String(100), nullable=False)
     patient_cnic = db.Column(db.String(100), nullable=False)
     patient_age = db.Column(db.Integer, nullable=False)
@@ -177,7 +178,6 @@ def nurse_login():
 def nurse_vitals():
     form = PatientForm()
     if form.validate_on_submit():
-        print(form.patient_name.data, form.patient_cnic.data, form.patient_age.data, form.patient_type.data)
         patient = Patient.query.filter_by(medical_record_number=form.medical_record_number.data).first()
         if not patient:
             vitals = Patient(
@@ -202,16 +202,9 @@ def nurse_vitals():
             db.session.commit()
             flash('Vitals recorded successfully!', 'success')
             return redirect(url_for('nurse_thank_you'))
-        if patient and patient.created_at.date() == datetime.datetime.utcnow().date():
+        else:
             flash('Patient already exists!', 'danger')
             return redirect(url_for('nurse_vitals'))
-        elif patient and patient.created_at.date() != datetime.datetime.utcnow().date():
-            flash('Patient had visited earlier in the day!', 'danger')
-            patient.visit_number += 1
-            db.session.commit()
-            return redirect(url_for('nurse_vitals'))
-        flash('Vitals recorded successfully!', 'success')
-        return redirect(url_for('nurse_thank_you'))
     return render_template('vitals.html', form=form)
 
 @app.route('/nurse/thank-you', methods=['GET', 'POST'])
@@ -243,6 +236,22 @@ def nurse_patient(medical_record_number):
     nurse_name = User.query.filter_by(employee_code=session['employee_code']).first()
     nurse_name = nurse_name.full_name.split(' ')[0].capitalize()
     return render_template('patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+
+@app.route('/nurse/patients/<int:medical_record_number>/download')
+@login_required
+def nurse_download(medical_record_number):
+    patient = Patient.query.filter_by(medical_record_number=medical_record_number).first()
+    date = patient.created_at.date()
+    time = patient.created_at.time().isoformat(timespec='minutes')
+    mr_num = patient.medical_record_number
+    nurse_name = User.query.filter_by(employee_code=session['employee_code']).first()
+    nurse_name = nurse_name.full_name.split(' ')[0].capitalize()
+    rendered = render_template('patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+    pdf = weasyprint.HTML(string=rendered).write_pdf()
+    response = app.make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename=Patient Details {mr_num}.pdf'
+    return response
 
 @app.route('/nurse/forgot-password', methods=['GET', 'POST'])
 @login_required
