@@ -123,8 +123,8 @@
             <div class="col-md-8">
                 <form class="form-inline my-2 my-lg-0" method="post" action="{{ url_for('nurse_search') }}">
                     {{ form.hidden_tag() }}
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search patients..." aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    {{ form.searched(class="form-control mr-sm-2", placeholder="Search patients...", aria_label="Search") }}
+                    {{ form.submit(class="btn btn-outline-success my-2 my-sm-0", type="submit") }}
                 </form>
             </div>
             <div class="col-md-4 text-right">
