@@ -101,7 +101,7 @@
             </div>
 
             <a href="{{ url_for('nurse_dashboard') }}" class="btn btn-primary mt-3 no-print">Back to Dashboard</a>
-            <button onclick="printPage()" class="btn btn-secondary mt-3 ml-3 no-print">Print Page</button>
+            <a href="{{ url_for('nurse_download', medical_record_number=patient.medical_record_number) }}" class="btn btn-secondary mt-3 ml-3 no-print">Print Page</a>
         </div>
     </div>
 
