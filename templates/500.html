@@ -3,10 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>500 - Not found</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>Error Page</title>
+    <style>
+        /* Add your existing styles here */
+
+        /* Style for the error message container */
+        .error-container {
+            text-align: center;
+            padding-top: 10%;
+        }
+
+        .error-code {
+            color: #4a8bdb;
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .error-message {
+            font-size: 1.5em;
+        }
+
+        .error-suggestion {
+            margin-top: 20px;
+            font-size: 1em;
+            color: grey;
+        }
+
+        /* Button style aligned with your theme */
+        .try-again-btn {
+            background-color: #4a8bdb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 30px;
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .try-again-btn:hover {
+            background-color: #3982c0;
+        }
+    </style>
 </head>
 <body>
-    <h1>500 - Not found</h1>
-    <p>Something is wrong at the server's end - try again!</p>
+    <div class="error-container">
+        <div class="error-code">500 - Not found</div>
+        <div class="error-message">Something is wrong at the server's end - try again!</div>
+        <div class="error-suggestion">
+            If you continue to see this error, please contact the support team.
+        </div>
+        <button onclick="location.reload();" class="try-again-btn">Try Again</button>
+    </div>
+
 </body>
 </html>
