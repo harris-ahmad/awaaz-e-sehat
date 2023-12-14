@@ -1,34 +1,21 @@
 # awaaz-e-sehat
 
-To run the Django app on your localhost, run the following command in the same root directory wherein
-`manage.py` file is hosted.
+To run the app, configure the following environment variables in your local terminal environment:
 
 ```bash
-python manage.py runserver
+FLASK_ENV=deployment
+FLASK_APP=app.py
 ```
 
-To run the test suite of the entire system, run the following command
+Next, make sure that you have all dependencies set up and installed to the matching versions given in the requirements.txt file. Download
+the PyPI packages using the following command:
 
 ```bash
-python manage.py runserver
+pip install -r requirements.txt
 ```
 
-Currently, there are a total of 8 tests written, so this is the following output that you should expect:
+You're all set to run the Awaaz-e-Sehat's first native build. To run, type the following command in your root directory:
 
 ```bash
-Found 8 test(s).
-Creating test database for alias 'default'...
-System check identified no issues (0 silenced).
-........
-----------------------------------------------------------------------
-Ran 8 tests in 0.704s
-
-OK
-Destroying test database for alias 'default'...
-```
-
-For a specific app's test suite, use the following command
-
-```bash
-python manage.py test app_name
+flask run
 ```
