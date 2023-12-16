@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, EqualTo, Length, Optional
 import datetime
 import bcrypt
 import weasyprint
+import uuid
 
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -23,7 +24,7 @@ except Exception as e:
     print(e)
     
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secretkey'
+app.config['SECRET_KEY'] = str(uuid.uuid5())
 
 home_blueprint = Blueprint('home', __name__, template_folder='.')
 doctor_blueprint = Blueprint('doctor', __name__, template_folder='doctor')
