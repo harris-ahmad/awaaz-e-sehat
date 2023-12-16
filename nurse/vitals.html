@@ -1,18 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Include Bootstrap CSS for styling and responsiveness -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>Add Patient</title>
+    <style>
+    /* Enhanced styling for the navbar */
+        .navbar {
+            background-color: #4a8bdb; /* A pleasant blue shade */
+            color: white;
+        }
+        .navbar a.navbar-brand {
+            color: white;
+        }
+        .navbar a.navbar-brand:hover {
+            color: #ddd; /* Light grey for hover effect */
+        }
+
+        /* Center-aligning card content */
+        .card-body {
+            text-align: center;
+        }
+
+        /* Adjust the sidebar toggle button */
+        .menu-toggle {
+            font-size: 30px;
+            cursor: pointer;
+            color: white;
+        }
+        /* Style for the sidebar */
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidebar a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #f1f1f1;
+        }
+
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        .sidebar a {
+            font-size: 20px; /* Adjusted font size */
+            padding: 10px 15px;
+            color: #f1f1f1;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar a i {
+            margin-right: 10px; /* Space between icon and text */
+        }
+
+        /* Hover effect for links */
+        .sidebar a:hover {
+            color: #e2e2e2;
+            background-color: #333;
+        }
+
+        /* Style for the close button */
+        .sidebar .closebtn {
+            font-size: 36px;
+            color: #f1f1f1;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <!-- Navigation Buttons -->
-        <div class="d-flex justify-content-between mb-3">
-            <a href="{{ url_for('nurse_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-            <a href="{{ url_for('nurse_logout') }}" class="btn btn-danger">Logout</a>
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="{{ url_for('nurse_update_profile') }}"><i class="fas fa-user-cog"></i> Update Profile</a>
+        <a href="{{ url_for('nurse_change_password') }}"><i class="fas fa-lock"></i> Change Password</a>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <span class="menu-toggle" onclick="openNav()">&#9776;</span>
+        <a class="navbar-brand ml-3" href="{{ url_for('nurse_dashboard') }}">Awaaz-e-Sehat</a>
+        <div class="ml-auto">
+            <a href="{{ url_for('nurse_logout') }}" class="btn btn-outline-light my-2 my-sm-0">Logout</a>
         </div>
+    </nav>
+    <div class="container mt-5">
 
         <!-- Flash messages -->
         <div id="flashed-messages">
@@ -204,7 +297,7 @@
             </div>
             
             <div>
-                {{ form.submit(class="btn btn-primary", id="submit", disabled="disabled") }}
+                {{ form.submit(class="btn btn-primary mb-3", id="submit", disabled="disabled") }}
             </div>
         </form>
     </div>
@@ -236,6 +329,15 @@
         setTimeout(() => {
             flashedMessages.innerHTML = '';
         }, 3000);
+
+        function openNav() {
+            document.getElementById("sidebar").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("sidebar").style.width = "0";
+        }
+
     </script>
 
     <!-- Optional JavaScript and jQuery for Bootstrap components to work -->
