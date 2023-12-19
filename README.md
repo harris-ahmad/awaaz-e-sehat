@@ -19,3 +19,18 @@ You're all set to run the Awaaz-e-Sehat's first native build. To run, type the f
 ```bash
 flask run
 ```
+
+To run it on a custom IP address, type in the following command: 
+
+```bash
+flask run --host a.b.c.d
+```
+
+**Note:** `a.b.c.d` is any 32-bit IP address.
+
+To test the app on your mobile device (iOS or Android), type in the following URL in your browser window:
+
+```text
+http://a.b.c.d:5000/
+```
+This will direct you to awaaz-e-sehat's homepage (`index.html`). 
