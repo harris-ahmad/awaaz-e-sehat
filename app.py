@@ -1,10 +1,11 @@
 from flask import Flask, render_template, redirect, url_for, flash, session, Blueprint, request
 from flask_login import LoginManager, login_user, logout_user, login_required
-from flask_wtf import FlaskForm
 import datetime
 import bcrypt
 import weasyprint
 import os
+
+from faster_whisper import WhisperModel
 
 from webforms import LoginForm, RegisterForm, PatientSearchForm, UpdateEmployeeProfile, ChangePasswordForm, PatientForm
 
@@ -22,6 +23,14 @@ try:
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)
+
+# setting up the model
+try:
+    model_size = "large-v3"
+    model = WhisperModel(model_size_or_path=model_size)
+    print('Whisper Model Initialized')
+except Exception as e:
+    print('Error initializing the model')
     
 app = Flask(__name__)
 app.config['SECRET_KEY'] = str(os.urandom(24).hex())
@@ -604,7 +613,6 @@ def doctor_search():
         return redirect(url_for('doctor_patient', medical_record_number=patients[0]['medical_record_number']))
     return redirect(url_for('doctor_dashboard'))
 
-
 @app.route('/doctor/logout')
 @login_required
 def doctor_logout():
@@ -627,17 +635,19 @@ def doctor_patient(medical_record_number):
     nurse_name = patient['recorded_by'].split()[0].capitalize()
     return render_template('patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
 
-@app.route('/doctor/patient/<string:medical_record_number>/download')
+@app.route('/doctor/patient/<string:medical_record_number>/record/medical-history', methods=['POST', 'GET'])
 @login_required
-def doctor_download(medical_record_number):
-    patient = Patient.get_patient(medical_record_number)
-    date = patient['created_at'].strftime("%d %B %Y")
-    time = patient['created_at'].strftime("%H:%M")
-    mr_num = patient['medical_record_number']
-    nurse_name = patient['recorded_by']
-    rendered = render_template('patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
-    pdf = weasyprint.HTML(string=rendered).write_pdf()
-    response = app.make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = f'attachment; filename=Patient Details {mr_num}.pdf'
-    return response
+def record_medical_history(medical_record_number):
+    if 'audio_data' not in request.files:
+        flash('Please submit a recording to proceed.')
+        return render_template('record-medical-hist.html')
+    
+    file = request.files['audio_data']
+    audio_path = './audio/'
+    file.save(audio_path) 
+
+    segments, _ = model.transcribe(file, language='ur')
+    segments = list(segments)
+    prediction = ""
+    for i in segments:
+        prediction += i[4]
