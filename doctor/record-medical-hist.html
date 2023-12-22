@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>Patient Details - {{ mr_num }}</title>
+    <style>
+        .patient-details-container {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .detail-header {
+            background-color: #e9ecef;
+            border-radius: 5px 5px 0 0;
+            padding: 10px 20px;
+            margin: -20px -20px 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .detail-item {
+            margin-bottom: 10px;
+        }
+        .detail-item strong {
+            width: 150px;
+            display: inline-block;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="patient-details-container">
+            <div class="detail-header">
+                <h2><b>Patient Profile</b></h2>
+                <p><em>Date of creation: {{ date }} at {{ time }}</em></p>
+                <p><em>Recorded by: {{ nurse_name }}</em></p>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center" style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-medicalhist" aria-expanded="false" aria-controls="expandableArea">
+                <span><strong>Medical History</strong></span>
+                <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
+            </div>
+            <span><em>If the patient doesn't has any medical history, please mention that in the recording.</em></span>
+            
+            <div class="collapse w-100" id="expandableArea-medicalhist">
+                <div id="personalDetailsSection" class="mb-3" style="padding-left: 20px;">
+                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#personalDetails" aria-expanded="false" aria-controls="personalDetails">
+                        <span><strong>Personal Details</strong></span>
+                        <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
+                    </div>
+                    <div id="personalDetails" class="collapse show">
+                        <div class="row" style="padding-left: 20px;">
+                            <div class="col-md-6">
+                                <p>Blood Group Self</p>
+                                <p>Education Self</p>
+                                <p>Occupation Self</p>
+                                <p>Married Since</p>
+                                <p>Gravide</p>
+                                <p>Para</p>
+                                <p>Miscarriage</p>
+                                <p>Abortion</p>
+                                <p>NMC (Regular/ Irregular)</p>
+                                <p>Consanguinous Marriage</p>
+                                <p>Vaginal Bleeding Since Last Period</p>
+                                <p>Oral Contraceptives, Other Contraceptives</p>
+                                <p>Drug Abuse</p>
+                                <p>Smoking</p>
+                                <p>Present Medications</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between"  data-toggle="collapse" data-target="#husbandDetails" aria-expanded="false" aria-controls="husbandDetails">
+                        <span><strong>Husband Details</strong></span>
+                        <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
+                    </div>
+                    <div id="husbandDetails" class="collapse show">
+                        <div class="row" style="padding-left: 20px;">
+                            <div class="col-md-6">
+                                <p>Name</p>
+                                <p>Age</p>
+                                <p>Education</p>
+                                <p>Blood Group</p>
+                                <p>Occupation</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#medicalHistory" aria-expanded="flase" aria-controls="medicalHistory">
+                        <span><strong>Medical History</strong></span>
+                        <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
+                    </div>
+                    <div id="medicalHistory" class="collapse show">
+                        <div class="row" style="padding-left: 20px;">
+                            <div class="col-md-6">
+                                <p>Diabetes</p>
+                                <p>Hypertension</p>
+                                <p>Recurrent UTI</p>
+                                <p>Anemia</p>
+                                <p>Cardiac Problem</p>
+                                <p>Hepatitis</p>
+                                <p>Heamoglobinopathy</p>
+                                <p>Endocrine dysfunction (Thyroid/PCOS)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#surgicalHistory" aria-expanded="false" aria-controls="surgicalHistory">
+                        <span><strong>Surgical History</strong></span>
+                        <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
+                    </div>
+                    <div id="surgicalHistory" class="collapse show">
+                        <div class="row" style="padding-left: 20px;">
+                            <div class="col-md-6">
+                                <p>Blood Transfusion</p>
+                                <p>Anesthetic Problem</p>
+                                <p>Infertility</p>
+                                <p>Operation Allergies</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="container" style="padding-top: 20px;">
+                <p><strong>Instructions:</strong></p>
+                <p>You will be recording the following patient data. Click the button to start recording.</p>
+                <button id="startRecordingBtn" class="btn btn-primary">Start Recording</button>
+                <button id="stopRecordingBtn" class="btn btn-secondary" disabled>Stop Recording</button>
+                <button id="retryRecordingBtn" class="btn btn-warning" disabled>Retry</button>
+                 <audio id="audioPlayback" controls style="display: none;"></audio>
+            </div>
+
+            <!-- <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-primary mt-3 no-print" style="width: 100%;">Start Recording</a> -->
+            <form id="audioForm" action="/your_flask_endpoint" method="post" enctype="multipart/form-data" style="display: none;">
+                <input type="file" id="audioInput" name="audio_data" accept=".mp3">
+                <input type="submit" value="Send">
+            </form>
+        </div>
+
+        <!-- <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-primary mt-3 no-print">Back to Dashboard</a> -->
+        <!-- <a href="{{ url_for('doctor_download', medical_record_number=patient.medical_record_number) }}" class="btn btn-secondary mt-3 ml-3 no-print">Print Page</a> -->
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        document.getElementById('startRecordingBtn').addEventListener('click', function() {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.start();
+
+            mediaRecorder.addEventListener("dataavailable", event => {
+                audioChunks.push(event.data);
+            });
+
+            mediaRecorder.addEventListener("stop", () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg-3' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new File(audioChunks, 'audio.mp3', { type: 'audio/mpeg-3', lastModified: Date.now() });
+                document.getElementById('audioPlayback').src = audioUrl;
+                document.getElementById('audioPlayback').style.display = 'block';
+
+                // Prepare the form for sending
+                const formData = new FormData();
+                formData.append('audio_data', audio);
+
+                // Send the form data to the Flask endpoint
+                $.ajax({
+                    url: '/your_flask_endpoint',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // prevent jQuery from converting the data
+                    contentType: false, // prevent jQuery from overriding content type
+                    success: function(response) {
+                        // Handle success
+                        console.log('Success:', response);
+                    },
+                    error: function(error) {
+                        // Handle error
+                        console.log('Error:', error);
+                    }
+                });
+
+                document.getElementById('retryRecordingBtn').disabled = false;
+            });
+
+            document.getElementById('startRecordingBtn').disabled = true;
+            document.getElementById('stopRecordingBtn').disabled = false;
+        });
+    });
+
+    document.getElementById('stopRecordingBtn').addEventListener('click', function() {
+        mediaRecorder.stop();
+        document.getElementById('stopRecordingBtn').disabled = true;
+        document.getElementById('startRecordingBtn').disabled = false;
+    });
+
+    function resetRecording() {
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+            mediaRecorder.stop();
+        }
+        audioChunks = [];
+        document.getElementById('audioPlayback').style.display = 'none';
+        document.getElementById('startRecordingBtn').disabled = false;
+        document.getElementById('stopRecordingBtn').disabled = true;
+        document.getElementById('retryRecordingBtn').disabled = true;
+    }
+
+    document.getElementById('retryRecordingBtn').addEventListener('click', resetRecording);
+
+    </script>
+
+    <!-- Optional Bootstrap JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
