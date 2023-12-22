@@ -4,6 +4,7 @@ import datetime
 import bcrypt
 import weasyprint
 import os
+import threading 
 
 from faster_whisper import WhisperModel
 
@@ -635,19 +636,35 @@ def doctor_patient(medical_record_number):
     nurse_name = patient['recorded_by'].split()[0].capitalize()
     return render_template('patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
 
-@app.route('/doctor/patient/<string:medical_record_number>/record/medical-history', methods=['POST', 'GET'])
+@app.route('/doctor/patient/<string:medical_record_number>/medical-history', methods=['POST', 'GET'])
 @login_required
 def record_medical_history(medical_record_number):
-    if 'audio_data' not in request.files:
-        flash('Please submit a recording to proceed.')
-        return render_template('record-medical-hist.html')
-    
-    file = request.files['audio_data']
-    audio_path = './audio/'
-    file.save(audio_path) 
+    patient = Patient.get_patient(medical_record_number)
+    date, time = patient['created_at'].strftime("%d %B %Y"), patient['created_at'].strftime("%H:%M")
+    mr_num = patient['medical_record_number']
+    nurse_name = patient['recorded_by'].split()[0].capitalize()
+    return render_template('record-medical-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
 
-    segments, _ = model.transcribe(file, language='ur')
-    segments = list(segments)
-    prediction = ""
-    for i in segments:
-        prediction += i[4]
+def transcribe_audio(audio_path):
+    def start_task():
+        segments, _ = model.transcribe(audio_path, language='ur')
+        segments = list(segments)
+        prediction = ""
+        for i in segments:
+            prediction += i[4]
+        text_path = os.path.join('static', 'transcriptions', 'transcription1.txt')
+        with open(text_path, 'w') as f:
+            f.write(prediction)
+    thread = threading.Thread(target=start_task)
+    thread.start()
+
+@app.route('/doctor/patient/<string:medical_record_number>/medical-history/record', methods=['POST', 'GET'])
+@login_required
+def record_medical_history_record(medical_record_number):
+    print(request.files)
+    if 'audio_data' in request.files:
+        file = request.files['audio_data']
+        audio_path = os.path.join('static', 'audio', file.filename)
+        file.save(audio_path) 
+        transcribe_audio(audio_path)
+    return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
