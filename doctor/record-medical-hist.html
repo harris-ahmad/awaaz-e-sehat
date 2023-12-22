@@ -133,10 +133,11 @@
 
             <div class="container" style="padding-top: 20px;">
                 <p><strong>Instructions:</strong></p>
-                <p>You will be recording the following patient data. Click the button to start recording.</p>
-                <button id="startRecordingBtn" class="btn btn-primary"><i class="fas fa-microphone" style="margin-right: 5px;"></i>Start Recording</button>
-                <button id="stopRecordingBtn" class="btn btn-secondary" disabled><i class="fas fa-stop-circle" style="margin-right: 5px;"></i>Stop Recording</button>
+                <p>You will be recording the patient's medical history now.</p>
+                <button id="startRecordingBtn" class="btn btn-primary" style="margin-right: 10px;"><i class="fas fa-microphone" style="margin-right: 5px;"></i>Start</button>
+                <button id="stopRecordingBtn" class="btn btn-secondary" style="margin-right: 10px;" disabled><i class="fas fa-stop-circle" style="margin-right: 5px;"></i>Stop</button>
                 <button id="retryRecordingBtn" class="btn btn-warning" disabled><i class="fas fa-redo" style="margin-right: 5px;"></i>Retry</button>
+                <button id="submitRecordingBtn" class="btn btn-success" style="margin-right: 10px; width: 100%; margin-top: 10px;"><i class="fas fa-check-circle" style="margin-right: 5px;"></i>Submit</button>
                 <div id="timer" style="display: none;">00:00:00</div>
                 <audio id="audioPlayback" controls style="display: none;"></audio>
             </div>
@@ -149,13 +150,17 @@
         </div>
 
         <!-- <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-primary mt-3 no-print">Back to Dashboard</a> -->
-        <!-- <a href="{{ url_for('doctor_download', medical_record_number=patient.medical_record_number) }}" class="btn btn-secondary mt-3 ml-3 no-print">Print Page</a> -->
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
         let mediaRecorder;
         let audioChunks = [];
         let recordingInterval;
+        const formData = new FormData();
 
         function startTimer() {
             let startTime = Date.now();
@@ -190,26 +195,8 @@
                 document.getElementById('audioPlayback').src = audioUrl;
                 document.getElementById('audioPlayback').style.display = 'block';
 
-                // Prepare the form for sending
-                const formData = new FormData();
+                // Prepare the form for sending 
                 formData.append('audio_data', audio);
-
-                // Send the form data to the Flask endpoint
-                $.ajax({
-                    url: '/your_flask_endpoint',
-                    type: 'POST',
-                    data: formData,
-                    processData: false, // prevent jQuery from converting the data
-                    contentType: false, // prevent jQuery from overriding content type
-                    success: function(response) {
-                        // Handle success
-                        console.log('Success:', response);
-                    },
-                    error: function(error) {
-                        // Handle error
-                        console.log('Error:', error);
-                    }
-                });
             });
             document.getElementById('retryRecordingBtn').disabled = false;
             document.getElementById('timer').style.display = 'block';
@@ -221,11 +208,33 @@
 
     document.getElementById('stopRecordingBtn').addEventListener('click', function() {
         mediaRecorder.stop();
-        document.getElementById('stopRecordingBtn').disabled = true;
-        document.getElementById('startRecordingBtn').disabled = false;
         stopTimer();
+        document.getElementById('stopRecordingBtn').disabled = true;
+        document.getElementById('submitRecordingBtn').disabled = false;
+        document.getElementById('retryRecordingBtn').disabled = false;
+        document.getElementById('startRecordingBtn').disabled = false;
         document.getElementById('timer').style.display = 'none';
     });
+
+    document.getElementById('submitRecordingBtn').addEventListener('click', function() {
+        // AJAX request to submit the audio file to the Flask endpoint
+        console.log('Sending audio file...');
+        $.ajax({
+            url: "/doctor/patient/{{ mr_num }}/medical-history/record",
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log('Success:', response);
+            },
+            error: function(error) {
+                console.log('Error:', error);
+            }
+        });
+        document.getElementById('submitRecordingBtn').disabled = true; // Disable submit button after sending
+    });
+
 
     function resetRecording() {
         if (mediaRecorder && mediaRecorder.state !== "inactive") {
@@ -245,8 +254,5 @@
     </script>
 
     <!-- Optional Bootstrap JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
