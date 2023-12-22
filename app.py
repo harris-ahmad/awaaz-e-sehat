@@ -8,7 +8,7 @@ import threading
 
 from faster_whisper import WhisperModel
 
-from webforms import LoginForm, RegisterForm, PatientSearchForm, UpdateEmployeeProfile, ChangePasswordForm, PatientForm
+from webforms import LoginForm, RegisterForm, PatientSearchForm, UpdateEmployeeProfile, ChangePasswordForm, PatientForm, DoctorPatientForm
 
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -643,7 +643,38 @@ def record_medical_history(medical_record_number):
     date, time = patient['created_at'].strftime("%d %B %Y"), patient['created_at'].strftime("%H:%M")
     mr_num = patient['medical_record_number']
     nurse_name = patient['recorded_by'].split()[0].capitalize()
-    return render_template('record-medical-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+    form = DoctorPatientForm()
+    if form.validate_on_submit():
+        gravida = form.gravida.data
+        lmp_date = form.lmp_date.data
+        has_allergies = form.has_allergies.data
+        allergy_drug = form.allergy_drug.data
+        allergy_pollen = form.allergy_pollen.data
+        allergy_dust = form.allergy_dust.data
+        allergy_other = form.allergy_other.data
+
+        gestation_age = (datetime.datetime.now().date() - lmp_date).days // 7
+        edd = lmp_date + datetime.timedelta(days=280)
+
+        db = client['users']
+        collection = db['patients']
+        collection.update_one(
+            {'medical_record_number': medical_record_number},
+            {'$set': {
+                'gravida': gravida,
+                'lmp_date': lmp_date,
+                'gestation_age': gestation_age,
+                'edd': edd,
+                'has_allergies': has_allergies,
+                'allergy_drug': allergy_drug,
+                'allergy_pollen': allergy_pollen,
+                'allergy_dust': allergy_dust,
+                'allergy_other': allergy_other
+            }}
+        )
+        flash('Medical history recorded successfully!', 'success')
+        return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
+    return render_template('record-medical-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name, form=form)
 
 def transcribe_audio(audio_path):
     def start_task():
