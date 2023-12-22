@@ -6,6 +6,9 @@ from wtforms import (
     SubmitField, 
     IntegerField, 
     SelectField, 
+    RadioField,
+    BooleanField,
+    DateField,
 )
 
 from wtforms.validators import (
@@ -62,6 +65,18 @@ class PatientForm(FlaskForm):
                                     ('3+', '3+ (300 mg/dL)'), ('4+', '4+ (1000 mg/dL)')], validators=[Optional()])
     hb = IntegerField('HB', validators=[Optional()])
     spO2 = IntegerField('SpO2', validators=[Optional()])
+    submit = SubmitField('Submit')
+
+class DoctorPatientForm(FlaskForm):
+    has_allergies = RadioField('Does the patient have any allergies?', 
+                               choices=[('yes', 'Yes'), ('no', 'No')], 
+                               validators=[DataRequired()])
+    allergy_drug = BooleanField('Drug')
+    allergy_pollen = BooleanField('Pollen')
+    allergy_dust = BooleanField('Dust')
+    allergy_other = BooleanField('Other')
+    gravida = SelectField('Gravida', choices=[('0', '0 / PG')] + [(str(n), str(n)) for n in range(1, 11)], validators=[Optional()])
+    lmp_date = DateField('LMP Date', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class PatientSearchForm(FlaskForm):
