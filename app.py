@@ -58,7 +58,7 @@ class Nurse:
         existing_nurse = self.check_existing()
         if existing_nurse is False:
             new_nurse = dict(
-                employee_code = self.employee_code,
+                employee_code = 'nurse_' + self.employee_code,
                 full_name = self.full_name,
                 password = bcrypt.hashpw(self.password.encode('utf-8'), bcrypt.gensalt()),
                 created_at = self.created_at
@@ -96,15 +96,6 @@ class Nurse:
     def get_id(self):
         return self.employee_code
     
-    @login_manager.user_loader
-    def load_user(employee_code):
-        db = client['users']
-        collection = db['nurse']
-        user = collection.find_one({'employee_code': employee_code})
-        if not user:
-            return None
-        return Nurse(user['employee_code'], user['full_name'], user['password'], user['created_at'])
-    
     def __repr__(self):
         return f'<Nurse {self.employee_code}>'
     
@@ -125,7 +116,7 @@ class Doctor:
         existing_doctor = self.check_existing()
         if existing_doctor is False:
             new_doctor = dict(
-                employee_code = self.employee_code,
+                employee_code = 'doctor_' + self.employee_code,
                 full_name = self.full_name,
                 password = bcrypt.hashpw(self.password.encode('utf-8'), bcrypt.gensalt()),
                 created_at = self.created_at
@@ -248,17 +239,17 @@ class Patient:
         
 @login_manager.user_loader
 def load_user(user_id):
-    user = Nurse.get_nurse(user_id)
-    if not user:
-        return None
-    return Nurse(user['employee_code'], user['full_name'], user['password'], user['created_at'])
-
-@login_manager.user_loader
-def load_user(user_id):
-    user = Doctor.get_doctor(user_id)
-    if not user:
-        return None
-    return Doctor(user['employee_code'], user['full_name'], user['password'], user['created_at'])
+    role, _ = user_id.split('_')
+    if role == 'doctor':
+        user = Doctor.get_doctor(user_id)
+        if not user:
+            return None
+        return Doctor(user['employee_code'], user['full_name'], user['password'], user['created_at'])
+    elif role == 'nurse':
+        user = Nurse.get_nurse(user_id)
+        if not user:
+            return None
+        return Nurse(user['employee_code'], user['full_name'], user['password'], user['created_at'])
 
 ########################################## ERROR HANDLERS ##########################################
 
@@ -302,7 +293,7 @@ def nurse_register():
 def nurse_login():
     form = LoginForm()
     if form.validate_on_submit():
-        employee_code = form.employee_code.data
+        employee_code = 'nurse_' + form.employee_code.data
         password = form.password.data
         nurse = Nurse.get_nurse(employee_code)
         if nurse and bcrypt.checkpw(password.encode('utf-8'), nurse['password']):
@@ -503,7 +494,7 @@ def doctor_register():
 def doctor_login():
     form = LoginForm()
     if form.validate_on_submit():
-        employee_code = form.employee_code.data
+        employee_code = 'doctor_' + form.employee_code.data
         password = form.password.data
         doctor = Doctor.get_doctor(employee_code)
         if doctor and bcrypt.checkpw(password.encode('utf-8'), doctor['password']):
@@ -635,3 +626,18 @@ def doctor_patient(medical_record_number):
     mr_num = patient['medical_record_number']
     nurse_name = patient['recorded_by'].split()[0].capitalize()
     return render_template('patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+
+@app.route('/doctor/patient/<string:medical_record_number>/download')
+@login_required
+def doctor_download(medical_record_number):
+    patient = Patient.get_patient(medical_record_number)
+    date = patient['created_at'].strftime("%d %B %Y")
+    time = patient['created_at'].strftime("%H:%M")
+    mr_num = patient['medical_record_number']
+    nurse_name = patient['recorded_by']
+    rendered = render_template('patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+    pdf = weasyprint.HTML(string=rendered).write_pdf()
+    response = app.make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename=Patient Details {mr_num}.pdf'
+    return response
