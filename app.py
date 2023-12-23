@@ -712,3 +712,15 @@ def record_family_history_record(medical_record_number):
         file.save(audio_path) 
         transcribe_audio(audio_path)
     return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
+
+@app.route('/doctor/patient/<string:medical_record_number>/social-history/record', methods=['POST', 'GET'])
+@login_required
+def record_social_history_record(medical_record_number):
+    print(request.files)
+    if 'audio_data' in request.files:
+        file = request.files['audio_data']
+        file_name = f'{medical_record_number}.mp3'
+        audio_path = os.path.join('static', 'audio', 'social-history', file_name)
+        file.save(audio_path) 
+        transcribe_audio(audio_path)
+    return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
