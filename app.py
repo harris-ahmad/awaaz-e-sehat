@@ -695,7 +695,8 @@ def record_medical_history_record(medical_record_number):
     print(request.files)
     if 'audio_data' in request.files:
         file = request.files['audio_data']
-        audio_path = os.path.join('static', 'audio', file.filename)
+        file_name = f'{medical_record_number}.mp3'
+        audio_path = os.path.join('static', 'audio', 'medical-history', file_name)
         file.save(audio_path) 
         transcribe_audio(audio_path)
     return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
