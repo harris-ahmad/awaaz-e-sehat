@@ -23,6 +23,30 @@
             color: #0056b3; /* Darker blue for emphasis */
         }
 
+        #toggleAllBtn {
+            transition: all 0.3s ease;
+            /* Smooth transition for hover effects */
+            border: none;
+            /* Removes the default border */
+        }
+
+        #toggleAllBtn:hover,
+        #toggleAllBtn:focus {
+            background-color: #17a2b8;
+            /* A slightly darker shade for the hover state */
+            box-shadow: 0 4px 8px 0 rgba(0, 123, 255, 0.5);
+            /* Enhanced shadow for a "raised" effect on hover */
+            transform: translateY(-2px);
+            /* Slight raise effect on hover */
+        }
+
+        #toggleAllBtn:active {
+            transform: translateY(-1px);
+            /* Slight push effect when clicked */
+            box-shadow: 0 2px 4px 0 rgba(0, 123, 255, 0.5);
+            /* Smaller shadow for clicked state */
+        }
+
         .patient-details-container {
             background-color: #f8f9fa;
             border-radius: 5px;
