@@ -6,26 +6,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Awaaz-e-Sehat</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-</head>
-
-<body>
-    <div class="container d-flex flex-column justify-content-center align-items-center vh-100">
-        <h1>Awaaz-e-Sehat</h1>
-        <p>Please click on the corresponding button below based on your role:</p>
-        <div class="btn-group-vertical" role="group"><a class="btn btn-primary btn-lg" role="button"
-                href="{{ url_for('nurse_login') }}" style="margin-bottom: 10px;">I am a Nurse</a><a
-                class="btn btn-secondary btn-lg" role="button" href="/doctor/login">I am a Doctor</a></div>
-    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
+        body {
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 2.5rem;
+        }
+
+        p {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .btn {
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.2rem; /* Increased font size */
+            font-weight: 600; /* Made font weight bolder */
+            letter-spacing: 0.05em; /* Added letter spacing for better readability */
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            margin: 10px 0;
+            width: calc(100% - 30px);
+            color: white;
+        }
+
+        .btn i {
+            margin-right: 10px;
+            color: white; /* Ensuring icon color is white for visibility */
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05); /* Added a subtle scaling effect on hover */
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+            transform: scale(1.05); /* Added a subtle scaling effect on hover */
+        }
+
         @media only screen and (max-width: 600px) {
-            .btn-group-vertical .btn {
-                width: 100%;
-                margin-top: 10px;
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .btn {
+                font-size: 1rem; /* Adjust font size for smaller screens */
+                padding: 12px 20px;
             }
         }
     </style>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container d-flex flex-column justify-content-center align-items-center">
+        <h1>Awaaz-e-Sehat</h1>
+        <p>Please click on the corresponding button below based on your role:</p>
+        <a class="btn btn-primary btn-lg" role="button" href="{{ url_for('nurse_login') }}"><i class="fas fa-user-nurse"></i> I am a Nurse</a>
+        <a class="btn btn-secondary btn-lg" role="button" href="/doctor/login"><i class="fas fa-user-md"></i> I am a Doctor</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
