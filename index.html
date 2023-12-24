@@ -24,7 +24,7 @@
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
             width: 90%;
             max-width: 400px;
@@ -49,9 +49,9 @@
             border: none;
             padding: 15px 25px;
             border-radius: 10px;
-            font-size: 1.2rem; /* Increased font size */
-            font-weight: 600; /* Made font weight bolder */
-            letter-spacing: 0.05em; /* Added letter spacing for better readability */
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
@@ -63,7 +63,7 @@
 
         .btn i {
             margin-right: 10px;
-            color: white; /* Ensuring icon color is white for visibility */
+            color: white;
         }
 
         .btn-primary {
@@ -72,7 +72,7 @@
 
         .btn-primary:hover {
             background-color: #0056b3;
-            transform: scale(1.05); /* Added a subtle scaling effect on hover */
+            transform: scale(1.05);
         }
 
         .btn-secondary {
@@ -81,7 +81,7 @@
 
         .btn-secondary:hover {
             background-color: #545b62;
-            transform: scale(1.05); /* Added a subtle scaling effect on hover */
+            transform: scale(1.05);
         }
 
         @media only screen and (max-width: 600px) {
@@ -95,7 +95,7 @@
             }
 
             .btn {
-                font-size: 1rem; /* Adjust font size for smaller screens */
+                font-size: 1rem;
                 padding: 12px 20px;
             }
         }
@@ -106,8 +106,10 @@
     <div class="container d-flex flex-column justify-content-center align-items-center">
         <h1>Awaaz-e-Sehat</h1>
         <p>Please click on the corresponding button below based on your role:</p>
-        <a class="btn btn-primary btn-lg" role="button" href="{{ url_for('nurse_login') }}"><i class="fas fa-user-nurse"></i> I am a Nurse</a>
-        <a class="btn btn-secondary btn-lg" role="button" href="/doctor/login"><i class="fas fa-user-md"></i> I am a Doctor</a>
+        <a class="btn btn-primary btn-lg" role="button" href="{{ url_for('nurse_login') }}"><i
+                class="fas fa-user-nurse"></i> I am a Nurse</a>
+        <a class="btn btn-secondary btn-lg" role="button" href="/doctor/login"><i class="fas fa-user-md"></i> I am a
+            Doctor</a>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
