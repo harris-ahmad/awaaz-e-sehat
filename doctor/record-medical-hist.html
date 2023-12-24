@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,19 +9,26 @@
     <title>Patient Details - {{ mr_num }}</title>
     <style>
         .instructions-container {
-            background-color: #eef2f7; /* Light blue background for visibility */
-            border-left: 4px solid #007bff; /* Blue border on the left for importance */
-            padding: 10px 20px; /* Padding for space inside the container */
-            margin-bottom: 20px; /* Margin to separate it from the rest of the content */
-            border-radius: 4px; /* Rounded corners */
+            background-color: #eef2f7;
+            /* Light blue background for visibility */
+            border-left: 4px solid #007bff;
+            /* Blue border on the left for importance */
+            padding: 10px 20px;
+            /* Padding for space inside the container */
+            margin-bottom: 20px;
+            /* Margin to separate it from the rest of the content */
+            border-radius: 4px;
+            /* Rounded corners */
         }
 
         .instructions-container p {
-            margin-bottom: 10px; /* Space between paragraphs */
+            margin-bottom: 10px;
+            /* Space between paragraphs */
         }
 
         .instructions-container strong {
-            color: #0056b3; /* Darker blue for emphasis */
+            color: #0056b3;
+            /* Darker blue for emphasis */
         }
 
         #toggleAllBtn {
@@ -53,6 +61,7 @@
             padding: 20px;
             margin-top: 20px;
         }
+
         .detail-header {
             background-color: #e9ecef;
             border-radius: 5px 5px 0 0;
@@ -60,12 +69,89 @@
             margin: -20px -20px 20px;
             border-bottom: 1px solid #dee2e6;
         }
+
         .detail-item {
             margin-bottom: 10px;
         }
+
         .detail-item strong {
             width: 150px;
             display: inline-block;
+        }
+
+        /* Additional styling for Patient Vitals and Medical History toggles */
+        .toggle-header {
+            cursor: pointer;
+            padding: 12px 20px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .toggle-header:hover {
+            background-color: #dde5ea;
+        }
+
+        .toggle-title {
+            font-weight: bold;
+            color: #495057;
+            user-select: none;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-header.collapsed .toggle-icon {
+            transform: rotate(0deg);
+        }
+
+        .toggle-header .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .expanded-area {
+            padding: 15px;
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #eaecef;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item strong {
+            display: block;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .detail-item span {
+            display: block;
+            color: #6c757d;
+        }
+
+        /* Adjustments for better responsiveness */
+        @media (max-width: 768px) {
+
+            .detail-item strong,
+            .detail-item span {
+                display: inline-block;
+                margin-right: 10px;
+            }
         }
 
         @media print {
@@ -75,6 +161,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container mt-5">
         <div class="patient-details-container">
@@ -84,7 +171,8 @@
                 <p><em>Recorded by: {{ nurse_name }}</em></p>
             </div>
 
-            <button id="toggleAllBtn" class="btn btn-info mb-3" onclick="toggleAllSections()">Toggle All Sections</button>
+            <button id="toggleAllBtn" class="btn btn-info mb-3" onclick="toggleAllSections()">Toggle All
+                Sections</button>
 
             <!-- Add a radio button based for  -->
             <div class="container">
@@ -95,7 +183,8 @@
                         <div>
                             <input type="radio" id="allergyYes" name="allergies" value="yes" onchange="showOptions()">
                             <label for="allergyYes">Yes</label>
-                            <input type="radio" id="allergyNo" name="allergies" value="no" onchange="showOptions()" checked>
+                            <input type="radio" id="allergyNo" name="allergies" value="no" onchange="showOptions()"
+                                checked>
                             <label for="allergyNo">No</label>
                         </div>
                     </div>
@@ -127,7 +216,8 @@
                         <div>
                             <input type="radio" id="sure" name="lmp" value="Sure" onchange="showOptionsLMP()">
                             <label for="unsure">Sure</label>
-                            <input type="radio" id="unsure" name="lmp" value="unsure" onchange="showOptionsLMP()" checked>
+                            <input type="radio" id="unsure" name="lmp" value="unsure" onchange="showOptionsLMP()"
+                                checked>
                             <label for="unsure">Unsure</label>
                         </div>
                     </div>
@@ -138,152 +228,152 @@
 
             </div>
 
-            <div class="d-flex justify-content-between align-items-center"style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-vitals" aria-expanded="false" aria-controls="expandableArea">
-                <span><strong>Patient Vitals</strong></span>
-                <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
+            <div class="toggle-header collapsed" data-toggle="collapse" data-target="#expandableArea-vitals"
+                aria-expanded="false" aria-controls="expandableArea">
+                <span class="toggle-title">Patient Vitals</span>
+                <i class="fas fa-chevron-down toggle-icon"></i> <!-- Font Awesome icon -->
             </div>
             <div class="collapse w-100" id="expandableArea-vitals">
-                <div class="detail-item">
-                    <strong>Medical Number:</strong> <span>{{ patient.medical_record_number }}</span>
-                </div>
-                <div class="detail-item">
-                    <strong>Name:</strong> <span>{{ patient.patient_name }}</span>
-                </div>
-                <div class="detail-item">
-                    <strong>Age:</strong> <span>{{ patient.patient_age }}</span>
-                </div>
-                
-                <!-- Add more patient details in the same pattern -->
-                <div class="detail-item">
-                    <strong>Condition:</strong> <span>{{ patient.patient_type }}</span>
-                </div>
-                <div class="detail-item">
-                    <strong>Last Visit:</strong> <span>{{ patient.visit_number }}</span>
-                </div>
-                <!-- Continue adding more details as needed -->
-                <div class="detail-item">
-                    <strong>Weight (kg):</strong> <span>{{ patient.weight_kg }}</span>
-                </div>
+                <div class="expanded-area">
+                    <div class="detail-item">
+                        <strong>Medical Number:</strong> <span>{{ patient.medical_record_number }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Name:</strong> <span>{{ patient.patient_name }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Age:</strong> <span>{{ patient.patient_age }}</span>
+                    </div>
 
-                <div class="detail-item">
-                    <strong>Height (cm):</strong> <span>{{ patient.height_cm }}</span>
-                </div>
+                    <!-- Add more patient details in the same pattern -->
+                    <div class="detail-item">
+                        <strong>Condition:</strong> <span>{{ patient.patient_type }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Last Visit:</strong> <span>{{ patient.visit_number }}</span>
+                    </div>
+                    <!-- Continue adding more details as needed -->
+                    <div class="detail-item">
+                        <strong>Weight (kg):</strong> <span>{{ patient.weight_kg }}</span>
+                    </div>
 
-                <div class="detail-item">
-                    <strong>Blood Pressure (Systole):</strong> <span>{{ patient.b_bp_sys }}</span>
-                </div>
+                    <div class="detail-item">
+                        <strong>Height (cm):</strong> <span>{{ patient.height_cm }}</span>
+                    </div>
 
-                <div class="detail-item">
-                    <strong>Blood Pressure (Diastole):</strong> <span>{{ patient.b_bp_dia }}</span>
-                </div>
+                    <div class="detail-item">
+                        <strong>Blood Pressure (Systole):</strong> <span>{{ patient.b_bp_sys }}</span>
+                    </div>
 
-                <div class="detail-item">
-                    <strong>Temperature (F):</strong> <span>{{ patient.temperature }}</span>
-                </div>
+                    <div class="detail-item">
+                        <strong>Blood Pressure (Diastole):</strong> <span>{{ patient.b_bp_dia }}</span>
+                    </div>
 
-                <div class="detail-item">
-                    <strong>Pluse:</strong> <span>{{ patient.pulse }}</span>
-                </div>
+                    <div class="detail-item">
+                        <strong>Temperature (F):</strong> <span>{{ patient.temperature }}</span>
+                    </div>
 
-                <div class="detail-item">
-                    <strong>BSR:</strong> <span>{{ patient.bsr }}</span>
-                </div>
+                    <div class="detail-item">
+                        <strong>Pluse:</strong> <span>{{ patient.pulse }}</span>
+                    </div>
 
-                <div class="detail-idisplay ALL information tem">
-                    <strong>Urine Albumin:</strong> <span>{{ patient.urine_albumin }}</span>
-                </div>
+                    <div class="detail-item">
+                        <strong>BSR:</strong> <span>{{ patient.bsr }}</span>
+                    </div>
 
-                <div class="detail-item">
-                    <strong>HB:</strong> <span>{{ patient.hb }}</span>
-                </div>
+                    <div class="detail-idisplay ALL information tem">
+                        <strong>Urine Albumin:</strong> <span>{{ patient.urine_albumin }}</span>
+                    </div>
 
-                <div class="detail-item">
-                    <strong>SPO2:</strong> <span>{{ patient.spO2 }}</span>
+                    <div class="detail-item">
+                        <strong>HB:</strong> <span>{{ patient.hb }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <strong>SPO2:</strong> <span>{{ patient.spO2 }}</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center" style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-medicalhist" aria-expanded="false" aria-controls="expandableArea">
-                <span><strong>Medical History</strong></span>
-                <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
-            </div>            
+            <div class="toggle-header collapsed" data-toggle="collapse" data-target="#expandableArea-medicalhist"
+                aria-expanded="false" aria-controls="expandableArea">
+                <span class="toggle-title">Medical History</span>
+                <i class="fas fa-chevron-down toggle-icon"></i> <!-- Font Awesome icon -->
+            </div>
             <div class="collapse w-100" id="expandableArea-medicalhist">
-                <div id="personalDetailsSection" class="mb-3" style="padding-left: 20px;">
-                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#personalDetails" aria-expanded="false" aria-controls="personalDetails">
-                        <span><strong>Personal Details</strong></span>
-                        <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
-                    </div>
-                    <div id="personalDetails" class="collapse show">
-                        <div class="row" style="padding-left: 20px;">
-                            <div class="col-md-6">
-                                <p>Blood Group Self</p>
-                                <p>Education Self</p>
-                                <p>Occupation Self</p>
-                                <p>Married Since</p>
-                                <p>Gravide</p>
-                                <p>Para</p>
-                                <p>Miscarriage</p>
-                                <p>Abortion</p>
-                                <p>NMC (Regular/ Irregular)</p>
-                                <p>Consanguinous Marriage</p>
-                                <p>Vaginal Bleeding Since Last Period</p>
-                                <p>Oral Contraceptives, Other Contraceptives</p>
-                                <p>Drug Abuse</p>
-                                <p>Smoking</p>
-                                <p>Present Medications</p>
-                            </div>
+                <div class="expanded-area">
+                    <div id="personalDetailsSection" class="mb-3" style="padding-left: 20px;">
+                        <div class="toggle-header d-flex justify-content-between" data-toggle="collapse"
+                            data-target="#personalDetails" aria-expanded="false" aria-controls="personalDetails">
+                            <span><strong>Personal Details</strong></span>
+                            <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
                         </div>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between"  data-toggle="collapse" data-target="#husbandDetails" aria-expanded="false" aria-controls="husbandDetails">
-                        <span><strong>Husband Details</strong></span>
-                        <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
-                    </div>
-                    <div id="husbandDetails" class="collapse show">
-                        <div class="row" style="padding-left: 20px;">
-                            <div class="col-md-6">
-                                <p>Name</p>
-                                <p>Age</p>
-                                <p>Education</p>
-                                <p>Blood Group</p>
-                                <p>Occupation</p>
-                            </div>
+                        <div id="personalDetails" class="expanded-area collapse show">
+                            <p>
+                                Blood Group Self<br />
+                                Education Self<br />
+                                Occupation Self<br />
+                                Married Since<br />
+                                Gravide<br />
+                                Para<br />
+                                Miscarriage<br />
+                                Abortion<br />
+                                NMC (Regular/ Irregular)<br />
+                                Consanguinous Marriage<br />
+                                Vaginal Bleeding Since Last Period<br />
+                                Oral Contraceptives, Other Contraceptives<br />
+                                Drug Abuse<br />
+                                Smoking<br />
+                                Present Medications<br />
+                            </p>
                         </div>
-                    </div>
 
-                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#medicalHistory" aria-expanded="flase" aria-controls="medicalHistory">
-                        <span><strong>Medical History</strong></span>
-                        <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
-                    </div>
-                    <div id="medicalHistory" class="collapse show">
-                        <div class="row" style="padding-left: 20px;">
-                            <div class="col-md-6">
-                                <p>Diabetes</p>
-                                <p>Hypertension</p>
-                                <p>Recurrent UTI</p>
-                                <p>Anemia</p>
-                                <p>Cardiac Problem</p>
-                                <p>Hepatitis</p>
-                                <p>Heamoglobinopathy</p>
-                                <p>Endocrine dysfunction (Thyroid/PCOS)</p>
-                            </div>
+                        <div class="toggle-header d-flex justify-content-between" data-toggle="collapse" data-target="#husbandDetails"
+                            aria-expanded="false" aria-controls="husbandDetails">
+                            <span><strong>Husband Details</strong></span>
+                            <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
+                        </div>
+                        <div id="husbandDetails" class="expanded-area collapse show">
+                            <p>
+                                Name<br />
+                                Age<br />
+                                Education<br />
+                                Blood Group<br />
+                                Occupation<br />
+                            </p>
+                        </div>
+
+                        <div class="toggle-header d-flex justify-content-between" data-toggle="collapse" data-target="#medicalHistory"
+                            aria-expanded="flase" aria-controls="medicalHistory">
+                            <span><strong>Medical History</strong></span>
+                            <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
+                        </div>
+                        <div id="medicalHistory" class="expanded-area collapse show">
+                            <p>
+                                Diabetes<br />
+                                Hypertension<br />
+                                Recurrent UTI<br />
+                                Anemia<br />
+                                Cardiac Problem<br />
+                                Hepatitis<br />
+                                Heamoglobinopathy<br />
+                                Endocrine dysfunction (Thyroid/PCOS)<br />
+                            </p>
+                        </div>
+                        <div class="toggle-header d-flex justify-content-between" data-toggle="collapse"
+                            data-target="#surgicalHistory" aria-expanded="false" aria-controls="surgicalHistory">
+                            <span><strong>Surgical History</strong></span>
+                            <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
+                        </div>
+                        <div id="surgicalHistory" class="expanded-area collapse show">
+                            <p>
+                                Blood Transfusion<br />
+                                Anesthetic Problem<br />
+                                Infertility<br />
+                                Operation Allergies<br />
+                            </p>
                         </div>
                     </div>
-
-                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#surgicalHistory" aria-expanded="false" aria-controls="surgicalHistory">
-                        <span><strong>Surgical History</strong></span>
-                        <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
-                    </div>
-                    <div id="surgicalHistory" class="collapse show">
-                        <div class="row" style="padding-left: 20px;">
-                            <div class="col-md-6">
-                                <p>Blood Transfusion</p>
-                                <p>Anesthetic Problem</p>
-                                <p>Infertility</p>
-                                <p>Operation Allergies</p>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
 
@@ -291,19 +381,27 @@
                 <div class="instructions-container">
                     <p><strong>Instructions:</strong></p>
                     <p>You will be recording the patient's medical history now.</p>
-                    <p><em>If the patient has no medical or surgical history, please mention that in the recording.</em></p>
-                    <p><strong>Before recording, please expand the toggles above and review the variables that you need to record.</strong></p>
+                    <p><em>If the patient has no medical or surgical history, please mention that in the recording.</em>
+                    </p>
+                    <p><strong>Before recording, please expand the toggles above and review the variables that you need
+                            to record.</strong></p>
                 </div>
-                <button id="startRecordingBtn" class="btn btn-primary" style="margin-right:30px;"><i class="fas fa-microphone" style="margin-right: 5px;"></i>Start</button>
-                <button id="stopRecordingBtn" class="btn btn-secondary" style="margin-right: 30px;" disabled><i class="fas fa-stop-circle" style="margin-right: 5px;"></i>Stop</button>
-                <button id="retryRecordingBtn" class="btn btn-warning" disabled><i class="fas fa-redo" style="margin-right: 5px;"></i>Retry</button>
-                <button id="submitRecordingBtn" class="btn btn-success" style="margin-right: 10px; width: 100%; margin-top: 10px;"><i class="fas fa-check-circle" style="margin-right: 5px;"></i>Submit</button>
+                <button id="startRecordingBtn" class="btn btn-primary" style="margin-right:30px;"><i
+                        class="fas fa-microphone" style="margin-right: 5px;"></i>Start</button>
+                <button id="stopRecordingBtn" class="btn btn-secondary" style="margin-right: 30px;" disabled><i
+                        class="fas fa-stop-circle" style="margin-right: 5px;"></i>Stop</button>
+                <button id="retryRecordingBtn" class="btn btn-warning" disabled><i class="fas fa-redo"
+                        style="margin-right: 5px;"></i>Retry</button>
+                <button id="submitRecordingBtn" class="btn btn-success"
+                    style="margin-right: 10px; width: 100%; margin-top: 10px;"><i class="fas fa-check-circle"
+                        style="margin-right: 5px;"></i>Submit</button>
                 <div id="timer" style="display: none;">00:00:00</div>
                 <audio id="audioPlayback" controls style="display: none;"></audio>
             </div>
 
             <!-- <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-primary mt-3 no-print" style="width: 100%;">Start Recording</a> -->
-            <form id="audioForm" action="/your_flask_endpoint" method="post" enctype="multipart/form-data" style="display: none;">
+            <form id="audioForm" action="/your_flask_endpoint" method="post" enctype="multipart/form-data"
+                style="display: none;">
                 <input type="file" id="audioInput" name="audio_data" accept=".mp3">
                 <input type="submit" value="Send">
             </form>
@@ -317,7 +415,13 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        
+
+        document.querySelectorAll('.toggle-header').forEach(function (header) {
+            header.addEventListener('click', function () {
+                this.classList.toggle('collapsed');
+            });
+        });
+
         function toggleAllSections() {
             // This will toggle the 'show' class on both sections
             let allCollapsibles = document.querySelectorAll('.collapse');
@@ -331,7 +435,7 @@
 
             // change the text of the toggle button to "Close All Sections" once it's been toggled
             let toggleAllBtn = document.getElementById("toggleAllBtn");
-            
+
             allChevronToggles.forEach(function (toggle) {
                 let chevron = toggle.querySelector('.fas');
                 if (chevron.classList.contains('fa-chevron-down')) {
@@ -379,81 +483,82 @@
             document.getElementById('timer').textContent = "00:00:00";
         }
 
-        document.getElementById('startRecordingBtn').addEventListener('click', function() {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
+        document.getElementById('startRecordingBtn').addEventListener('click', function () {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
 
-            mediaRecorder.addEventListener("dataavailable", event => {
-                audioChunks.push(event.data);
-            });
+                    mediaRecorder.addEventListener("dataavailable", event => {
+                        audioChunks.push(event.data);
+                    });
 
-            mediaRecorder.addEventListener("stop", () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg-3' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                const audio = new File(audioChunks, 'audio.mp3', { type: 'audio/mpeg-3', lastModified: Date.now() });
-                document.getElementById('audioPlayback').src = audioUrl;
-                document.getElementById('audioPlayback').style.display = 'block';
+                    mediaRecorder.addEventListener("stop", () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg-3' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        const audio = new File(audioChunks, 'audio.mp3', { type: 'audio/mpeg-3', lastModified: Date.now() });
+                        document.getElementById('audioPlayback').src = audioUrl;
+                        document.getElementById('audioPlayback').style.display = 'block';
 
-                // Prepare the form for sending 
-                formData.append('audio_data', audio);
-            });
-            document.getElementById('retryRecordingBtn').disabled = false;
-            document.getElementById('timer').style.display = 'block';
-            startTimer();
-            document.getElementById('startRecordingBtn').disabled = true;
-            document.getElementById('stopRecordingBtn').disabled = false;
+                        // Prepare the form for sending 
+                        formData.append('audio_data', audio);
+                    });
+                    document.getElementById('retryRecordingBtn').disabled = false;
+                    document.getElementById('timer').style.display = 'block';
+                    startTimer();
+                    document.getElementById('startRecordingBtn').disabled = true;
+                    document.getElementById('stopRecordingBtn').disabled = false;
+                });
         });
-    });
 
-    document.getElementById('stopRecordingBtn').addEventListener('click', function() {
-        mediaRecorder.stop();
-        stopTimer();
-        document.getElementById('stopRecordingBtn').disabled = true;
-        document.getElementById('submitRecordingBtn').disabled = false;
-        document.getElementById('retryRecordingBtn').disabled = false;
-        document.getElementById('startRecordingBtn').disabled = false;
-        document.getElementById('timer').style.display = 'none';
-    });
-
-    document.getElementById('submitRecordingBtn').addEventListener('click', function() {
-        // AJAX request to submit the audio file to the Flask endpoint
-        console.log('Sending audio file...');
-        $.ajax({
-            url: "/doctor/patient/{{ mr_num }}/medical-history/record",
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                console.log('Success:', response);
-            },
-            error: function(error) {
-                console.log('Error:', error);
-            }
-        });
-        document.getElementById('submitRecordingBtn').disabled = true; // Disable submit button after sending
-    });
-
-
-    function resetRecording() {
-        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        document.getElementById('stopRecordingBtn').addEventListener('click', function () {
             mediaRecorder.stop();
-        }
-        audioChunks = [];
-        document.getElementById('audioPlayback').style.display = 'none';
-        document.getElementById('startRecordingBtn').disabled = false;
-        document.getElementById('stopRecordingBtn').disabled = true;
-        document.getElementById('retryRecordingBtn').disabled = true;
-        stopTimer();
-        document.getElementById('timer').style.display = 'none';
-    }
+            stopTimer();
+            document.getElementById('stopRecordingBtn').disabled = true;
+            document.getElementById('submitRecordingBtn').disabled = false;
+            document.getElementById('retryRecordingBtn').disabled = false;
+            document.getElementById('startRecordingBtn').disabled = false;
+            document.getElementById('timer').style.display = 'none';
+        });
 
-    document.getElementById('retryRecordingBtn').addEventListener('click', resetRecording);
+        document.getElementById('submitRecordingBtn').addEventListener('click', function () {
+            // AJAX request to submit the audio file to the Flask endpoint
+            console.log('Sending audio file...');
+            $.ajax({
+                url: "/doctor/patient/{{ mr_num }}/medical-history/record",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log('Success:', response);
+                },
+                error: function (error) {
+                    console.log('Error:', error);
+                }
+            });
+            document.getElementById('submitRecordingBtn').disabled = true; // Disable submit button after sending
+        });
+
+
+        function resetRecording() {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                mediaRecorder.stop();
+            }
+            audioChunks = [];
+            document.getElementById('audioPlayback').style.display = 'none';
+            document.getElementById('startRecordingBtn').disabled = false;
+            document.getElementById('stopRecordingBtn').disabled = true;
+            document.getElementById('retryRecordingBtn').disabled = true;
+            stopTimer();
+            document.getElementById('timer').style.display = 'none';
+        }
+
+        document.getElementById('retryRecordingBtn').addEventListener('click', resetRecording);
 
     </script>
 
     <!-- Optional Bootstrap JavaScript -->
 </body>
+
 </html>
