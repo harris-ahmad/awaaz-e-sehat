@@ -7,6 +7,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>Patient Details - {{ mr_num }}</title>
     <style>
+        .instructions-container {
+            background-color: #eef2f7; /* Light blue background for visibility */
+            border-left: 4px solid #007bff; /* Blue border on the left for importance */
+            padding: 10px 20px; /* Padding for space inside the container */
+            margin-bottom: 20px; /* Margin to separate it from the rest of the content */
+            border-radius: 4px; /* Rounded corners */
+        }
+
+        .instructions-container p {
+            margin-bottom: 10px; /* Space between paragraphs */
+        }
+
+        .instructions-container strong {
+            color: #0056b3; /* Darker blue for emphasis */
+        }
+
         .patient-details-container {
             background-color: #f8f9fa;
             border-radius: 5px;
@@ -157,9 +173,12 @@
             </div>
 
             <div class="container" style="padding-top: 20px;">
-                <p><strong>Instructions:</strong></p>
-                <p>You will be recording the patient's medical history now.</p>
-                <p><em>If the patient has no previously recorded family history, please make sure to record.</em></p>
+                <div class="instructions-container">
+                    <p><strong>Instructions:</strong></p>
+                    <p>You will now be recording the patient's and her husband's family's medical history now.</p>
+                    <p><em>If the patient has no previously recorded family history, please make sure to record.</em></p>
+                    <p><strong>Before recording, please expand the toggles above and review the variables that you need to record.</strong></p>
+                </div> 
                 <button id="startRecordingBtn" class="btn btn-primary" style="margin-right:30px;"><i class="fas fa-microphone" style="margin-right: 5px;"></i>Start</button>
                 <button id="stopRecordingBtn" class="btn btn-secondary" style="margin-right: 30px;" disabled><i class="fas fa-stop-circle" style="margin-right: 5px;"></i>Stop</button>
                 <button id="retryRecordingBtn" class="btn btn-warning" disabled><i class="fas fa-redo" style="margin-right: 5px;"></i>Retry</button>
