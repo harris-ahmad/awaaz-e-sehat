@@ -6,7 +6,7 @@ import weasyprint
 import os
 import threading 
 
-from faster_whisper import WhisperModel
+# from faster_whisper import WhisperModel
 
 from webforms import LoginForm, RegisterForm, PatientSearchForm, UpdateEmployeeProfile, ChangePasswordForm, PatientForm, DoctorPatientForm
 
@@ -26,12 +26,12 @@ except Exception as e:
     print(e)
 
 # setting up the model
-try:
-    model_size = "large-v3"
-    model = WhisperModel(model_size_or_path=model_size)
-    print('Whisper Model Initialized')
-except Exception as e:
-    print('Error initializing the model')
+# try:
+#     model_size = "large-v3"
+#     model = WhisperModel(model_size_or_path=model_size)
+#     print('Whisper Model Initialized')
+# except Exception as e:
+#     print('Error initializing the model')
     
 app = Flask(__name__)
 app.config['SECRET_KEY'] = str(os.urandom(24).hex())
@@ -676,18 +676,18 @@ def record_medical_history(medical_record_number):
         return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
     return render_template('record-medical-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name, form=form)
 
-def transcribe_audio(audio_path):
-    def start_task():
-        segments, _ = model.transcribe(audio_path, language='ur')
-        segments = list(segments)
-        prediction = ""
-        for i in segments:
-            prediction += i[4]
-        text_path = os.path.join('static', 'transcriptions', 'transcription1.txt')
-        with open(text_path, 'w') as f:
-            f.write(prediction)
-    thread = threading.Thread(target=start_task)
-    thread.start()
+# def transcribe_audio(audio_path):
+#     def start_task():
+#         segments, _ = model.transcribe(audio_path, language='ur')
+#         segments = list(segments)
+#         prediction = ""
+#         for i in segments:
+#             prediction += i[4]
+#         text_path = os.path.join('static', 'transcriptions', 'transcription1.txt')
+#         with open(text_path, 'w') as f:
+#             f.write(prediction)
+#     thread = threading.Thread(target=start_task)
+#     thread.start()
 
 @app.route('/doctor/patient/<string:medical_record_number>/medical-history/record', methods=['POST', 'GET'])
 @login_required
@@ -698,7 +698,7 @@ def record_medical_history_record(medical_record_number):
         file_name = f'{medical_record_number}.mp3'
         audio_path = os.path.join('static', 'audio', 'medical-history', file_name)
         file.save(audio_path) 
-        transcribe_audio(audio_path)
+        # transcribe_audio(audio_path)
     return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
 
 @app.route('/doctor/patient/<string:medical_record_number>/family-history/record', methods=['POST', 'GET'])
@@ -710,7 +710,7 @@ def record_family_history_record(medical_record_number):
         file_name = f'{medical_record_number}.mp3'
         audio_path = os.path.join('static', 'audio', 'family-history', file_name)
         file.save(audio_path) 
-        transcribe_audio(audio_path)
+        # transcribe_audio(audio_path)
     return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
 
 @app.route('/doctor/patient/<string:medical_record_number>/social-history/record', methods=['POST', 'GET'])
@@ -722,5 +722,5 @@ def record_social_history_record(medical_record_number):
         file_name = f'{medical_record_number}.mp3'
         audio_path = os.path.join('static', 'audio', 'social-history', file_name)
         file.save(audio_path) 
-        transcribe_audio(audio_path)
+        # transcribe_audio(audio_path)
     return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
