@@ -317,6 +317,34 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        
+        function toggleAllSections() {
+            // This will toggle the 'show' class on both sections
+            let allCollapsibles = document.querySelectorAll('.collapse');
+
+            allCollapsibles.forEach(function (collapsible) {
+                $(collapsible).collapse('toggle'); // Use Bootstrap's jQuery collapse method
+            });
+
+            // This will change the chevron icon on all toggle buttons
+            let allChevronToggles = document.querySelectorAll('[data-toggle="collapse"]');
+
+            // change the text of the toggle button to "Close All Sections" once it's been toggled
+            let toggleAllBtn = document.getElementById("toggleAllBtn");
+            
+            allChevronToggles.forEach(function (toggle) {
+                let chevron = toggle.querySelector('.fas');
+                if (chevron.classList.contains('fa-chevron-down')) {
+                    chevron.classList.remove('fa-chevron-down');
+                    chevron.classList.add('fa-chevron-up');
+                    toggleAllBtn.textContent = 'Close All Sections';
+                } else if (chevron.classList.contains('fa-chevron-up')) {
+                    chevron.classList.remove('fa-chevron-up');
+                    chevron.classList.add('fa-chevron-down');
+                    toggleAllBtn.textContent = 'Toggle All Sections';
+                }
+            });
+        }
 
         let mediaRecorder;
         let audioChunks = [];
