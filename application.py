@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, flash, session, Blueprint, request
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
 import datetime
 import bcrypt
 import weasyprint
@@ -7,8 +7,6 @@ import os
 import threading
 from bson.objectid import ObjectId
 from bson import binary
-
-# from faster_whisper import WhisperModel
 
 from webforms import LoginForm, RegisterForm, PatientSearchForm, UpdateEmployeeProfile, ChangePasswordForm, PatientForm, DoctorPatientForm
 
@@ -25,54 +23,37 @@ try:
 except Exception as e:
     print(e)
 
-# setting up the model
-# try:
-#     model_size = "large-v3"
-#     model = WhisperModel(model_size_or_path=model_size)
-#     print('Whisper Model Initialized')
-# except Exception as e:
-#     print('Error initializing the model')
-
 application = Flask(__name__)
 application.config['SECRET_KEY'] = str(os.urandom(24).hex())
 
-home_blueprint = Blueprint('home', __name__, template_folder='.')
-doctor_blueprint = Blueprint('doctor', __name__, template_folder='doctor')
-nurse_blueprint = Blueprint('nurse', __name__, template_folder='nurse')
+home_blueprint = Blueprint(
+    'home', __name__, template_folder='.', url_prefix='/')
+doctor_blueprint = Blueprint(
+    'doctor', __name__, template_folder='doctor', url_prefix='/doctor')
+nurse_blueprint = Blueprint(
+    'nurse', __name__, template_folder='nurse', url_prefix='/nurse')
 
-application.register_blueprint(doctor_blueprint, url_prefix='/doctor')
-application.register_blueprint(nurse_blueprint, url_prefix='/nurse')
-application.register_blueprint(home_blueprint, url_prefix='/')
+application.register_blueprint(home_blueprint)
+application.register_blueprint(doctor_blueprint)
+application.register_blueprint(nurse_blueprint)
 
 login_manager = LoginManager()
 login_manager.init_app(application)
 login_manager.blueprint_login_views = {
-    'doctor': '/doctor/login',
-    'nurse': '/nurse/login'
+    'home': 'home',
+    'doctor': 'doctor_login',
+    'nurse': 'nurse_login'
 }
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    role, employee_code = user_id.split('_', 1)
-    if role == 'doctor':
-        user = Doctor.get_doctor('doctor_' + employee_code)
-    elif role == 'nurse':
-        user = Nurse.get_nurse('nurse_' + employee_code)
-    else:
-        return None
-    if not user:
-        return None
-    return Doctor(user['employee_code'], user['full_name'], user['password'], user['created_at']) if role == 'doctor' \
-        else Nurse(user['employee_code'], user['full_name'], user['password'], user['created_at'])
-
-
-class Nurse:
+class Nurse(UserMixin):
     def __init__(self, employee_code, full_name, password, created_at=datetime.datetime.now()):
+        super().__init__()
         self.employee_code = employee_code
         self.full_name = full_name
         self.created_at = created_at
         self.password = password
+        self.id = employee_code
 
     @property
     def verify_password(self, password):
@@ -109,31 +90,17 @@ class Nurse:
         nurse = collection.find_one({'employee_code': employee_code})
         return nurse
 
-    @staticmethod
-    def is_authenticated():
-        return True
-
-    @staticmethod
-    def is_active():
-        return True
-
-    @staticmethod
-    def is_anonymous():
-        return False
-
-    def get_id(self):
-        return self.employee_code
-
     def __repr__(self):
         return f'<Nurse {self.employee_code}>'
 
 
-class Doctor:
+class Doctor(UserMixin):
     def __init__(self, employee_code, full_name, password, created_at=datetime.datetime.now()):
         self.employee_code = employee_code
         self.full_name = full_name
         self.created_at = created_at
         self.password = password
+        self.id = employee_code
 
     @property
     def verify_password(self, password):
@@ -169,30 +136,6 @@ class Doctor:
         collection = db['doctor']
         doctor = collection.find_one({'employee_code': employee_code})
         return doctor
-
-    @staticmethod
-    def is_authenticated():
-        return True
-
-    @staticmethod
-    def is_active():
-        return True
-
-    @staticmethod
-    def is_anonymous():
-        return False
-
-    def get_id(self):
-        return self.employee_code
-
-    @login_manager.user_loader
-    def load_user(employee_code):
-        db = client['users']
-        collection = db['doctor']
-        user = collection.find_one({'employee_code': employee_code})
-        if not user:
-            return None
-        return Doctor(user['employee_code'], user['full_name'], user['password'], user['created_at'])
 
     def __repr__(self):
         return f'<Doctor {self.employee_code}>'
@@ -345,6 +288,9 @@ def load_user(user_id):
         if not user:
             return None
         return Nurse(user['employee_code'], user['full_name'], user['password'], user['created_at'])
+    else:
+        return None
+
 
 ########################################## ERROR HANDLERS ##########################################
 
@@ -395,7 +341,7 @@ def nurse_register():
         else:
             flash('User already exists!', 'danger')
             return redirect(url_for('nurse_register'))
-    return render_template('signup.html', form=form)
+    return render_template('./nurse/signup.html', form=form)
 
 
 @application.route('/nurse/login', methods=['GET', 'POST'])
@@ -418,7 +364,7 @@ def nurse_login():
         else:
             flash('Invalid credentials!', 'danger')
             return redirect(url_for('nurse_login'))
-    return render_template('login.html', form=form)
+    return render_template('./nurse/login.html', form=form)
 
 
 @application.route('/nurse/dashboard')
@@ -432,7 +378,7 @@ def nurse_dashboard():
             "%d %B %Y"), datetime.datetime.now().strftime("%H:%M")
         form = PatientSearchForm()
         return render_template(
-            template_name_or_list='dashboard.html',
+            template_name_or_list='./nurse/dashboard.html',
             first_name=first_name,
             curr_date=curr_date,
             curr_time=curr_time,
@@ -473,7 +419,7 @@ def nurse_vitals():
         else:
             flash('Patient already exists!', 'danger')
             return redirect(url_for('nurse_vitals'))
-    return render_template('vitals.html', form=form)
+    return render_template('./nurse/vitals.html', form=form)
 
 
 @application.route('/nurse/profile/update', methods=['GET', 'POST'])
@@ -501,7 +447,7 @@ def nurse_update_profile():
             flash('No changes made!', 'danger')
             return redirect(url_for('nurse_dashboard'))
     return render_template(
-        template_name_or_list='update-profile.html',
+        template_name_or_list='./nurse/update-profile.html',
         form=form,
         curr_full_name=curr_full_name,
         curr_employee_code=curr_employee_code
@@ -535,7 +481,7 @@ def nurse_change_password():
         else:
             flash('Invalid password!', 'danger')
             return redirect(url_for('nurse_change_password'))
-    return render_template('change-password.html', form=form)
+    return render_template('./nurse/change-password.html', form=form)
 
 
 @application.route('/nurse/search', methods=['POST', 'GET'])
@@ -550,7 +496,11 @@ def nurse_search():
             {'full_name': {'$regex': searched, '$options': 'i'}},
             {'medical_record_number': {'$regex': searched, '$options': 'i'}},
         ]})
-        return redirect(url_for('nurse_patient', medical_record_number=patients[0]['medical_record_number']))
+        if patients.distinct('medical_record_number') == []:
+            flash('No patient found!', 'danger')
+            return redirect(url_for('nurse_dashboard'))
+        else:
+            return redirect(url_for('nurse_patient', medical_record_number=patients[0]['medical_record_number']))
     return redirect(url_for('nurse_dashboard'))
 
 
@@ -562,7 +512,9 @@ def nurse_patient(medical_record_number):
         "%d %B %Y"), patient['created_at'].strftime("%H:%M")
     mr_num = patient['medical_record_number']
     nurse_name = patient['recorded_by'].split()[0].capitalize()
-    return render_template('patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+    full_name = patient['full_name']
+    age = patient['age']
+    return render_template('./nurse/patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name, full_name=full_name, age=age)
 
 
 @application.route('/nurse/patients/<string:medical_record_number>/download')
@@ -574,8 +526,10 @@ def nurse_download(medical_record_number):
     mr_num = patient['medical_record_number']
     nurse_name = Nurse.get_nurse(session['employee_code'])['full_name']
     nurse_name = nurse_name.split()[0].capitalize()
-    rendered = render_template('patient.html', patient=patient,
-                               date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+    full_name = patient['full_name']
+    age = patient['age']
+    rendered = render_template('./nurse/patient.html', patient=patient,
+                               date=date, time=time, mr_num=mr_num, nurse_name=nurse_name, full_name=full_name, age=age)
     pdf = weasyprint.HTML(string=rendered).write_pdf()
     response = application.make_response(pdf)
     response.headers['Content-Type'] = 'application/pdf'
@@ -612,7 +566,7 @@ def doctor_register():
         else:
             flash('User already exists!', 'danger')
             return redirect(url_for('doctor_register'))
-    return render_template('signup.html', form=form)
+    return render_template('./doctor/signup.html', form=form)
 
 
 @application.route('/doctor/login', methods=['GET', 'POST'])
@@ -635,7 +589,7 @@ def doctor_login():
         else:
             flash('Invalid credentials!', 'danger')
             return redirect(url_for('doctor_login'))
-    return render_template('login.html', form=form)
+    return render_template('./doctor/login.html', form=form)
 
 
 @application.route('/doctor/dashboard')
@@ -649,7 +603,7 @@ def doctor_dashboard():
             "%d %B %Y"), datetime.datetime.now().strftime("%H:%M")
         form = PatientSearchForm()
         return render_template(
-            template_name_or_list='dashboard.html',
+            template_name_or_list='./doctor/dashboard.html',
             first_name=first_name,
             curr_date=curr_date,
             curr_time=curr_time,
@@ -684,7 +638,7 @@ def doctor_update_profile():
                 flash('No changes made!', 'danger')
                 return redirect(url_for('doctor_dashboard'))
     return render_template(
-        template_name_or_list='update-profile.html',
+        template_name_or_list='./doctor/update-profile.html',
         form=form,
         curr_full_name=curr_full_name,
         curr_employee_code=curr_employee_code
@@ -719,7 +673,7 @@ def doctor_change_password():
             else:
                 flash('Invalid password!', 'danger')
                 return redirect(url_for('doctor_change_password'))
-    return render_template('change-password.html', form=form)
+    return render_template('./doctor/change-password.html', form=form)
 
 
 @application.route('/doctor/search', methods=['POST', 'GET'])
@@ -767,7 +721,7 @@ def doctor_patient(medical_record_number):
         "%d %B %Y"), patient['created_at'].strftime("%H:%M")
     mr_num = patient['medical_record_number']
     nurse_name = patient['recorded_by'].split()[0].capitalize()
-    return render_template('patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+    return render_template('./doctor/patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
 
 
 @application.route('/doctor/patient/<string:medical_record_number>/medical-history/record', methods=['POST', 'GET'])
@@ -823,20 +777,7 @@ def record_medical_history(medical_record_number):
         audio.add_audio()
         audio_file.save(audio_path)
 
-    return render_template('record-medical-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name, form=form)
-
-# def transcribe_audio(audio_path):
-#     def start_task():
-#         segments, _ = model.transcribe(audio_path, language='ur')
-#         segments = list(segments)
-#         prediction = ""
-#         for i in segments:
-#             prediction += i[4]
-#         text_path = os.path.join('static', 'transcriptions', 'transcription1.txt')
-#         with open(text_path, 'w') as f:
-#             f.write(prediction)
-#     thread = threading.Thread(target=start_task)
-#     thread.start()
+    return render_template('./doctor/record-medical-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name, form=form)
 
 
 @application.route('/doctor/patient/<string:medical_record_number>/medical-history/record', methods=['POST', 'GET'])
