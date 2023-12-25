@@ -733,6 +733,8 @@ def record_medical_history(medical_record_number):
     mr_num = patient['medical_record_number']
     nurse_name = patient['recorded_by'].split()[0].capitalize()
     form = DoctorPatientForm()
+    form_success = False
+    audio_success = False
     if form.validate_on_submit():
         gravida = form.gravida.data
         lmp_date = form.lmp_date.data
@@ -762,61 +764,80 @@ def record_medical_history(medical_record_number):
             }}
         )
         flash('Medical history recorded successfully!', 'success')
-        return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
+        form_success = True
 
     if 'audio_data' in request.files:
         audio_file = request.files['audio_data']
         file_name = f'{medical_record_number}.mp3'
-        audio_path = os.path.join(
-            'static', 'audio', 'medical-history', file_name)
         audio = Audio(
             audio_type='medical-history',
-            file=audio_path,
+            file=audio_file,
             medical_record_number=medical_record_number
         )
         audio.add_audio()
-        audio_file.save(audio_path)
+        audio_success = True
 
+    if form_success and audio_success:
+        return redirect(url_for('record_family_history', medical_record_number=medical_record_number))
+    else:
+        flash('Please fill all the fields!', 'danger')
     return render_template('./doctor/record-medical-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name, form=form)
-
-
-@application.route('/doctor/patient/<string:medical_record_number>/medical-history/record', methods=['POST', 'GET'])
-@login_required
-def record_medical_history_record(medical_record_number):
-    print(request.files)
-    if 'audio_data' in request.files:
-        file = request.files['audio_data']
-        file_name = f'{medical_record_number}.mp3'
-        audio_path = os.path.join(
-            'static', 'audio', 'medical-history', file_name)
-        file.save(audio_path)
-        # transcribe_audio(audio_path)
-    return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
 
 
 @application.route('/doctor/patient/<string:medical_record_number>/family-history/record', methods=['POST', 'GET'])
 @login_required
 def record_family_history_record(medical_record_number):
-    print(request.files)
+    patient = Patient.get_patient(medical_record_number)
+    date, time = patient['created_at'].strftime(
+        "%d %B %Y"), patient['created_at'].strftime("%H:%M")
+    mr_num = patient['medical_record_number']
+    nurse_name = patient['recorded_by'].split()[0].capitalize()
+
+    audio_success = False
     if 'audio_data' in request.files:
-        file = request.files['audio_data']
+        audio_file = request.files['audio_data']
         file_name = f'{medical_record_number}.mp3'
-        audio_path = os.path.join(
-            'static', 'audio', 'family-history', file_name)
-        file.save(audio_path)
-        # transcribe_audio(audio_path)
-    return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
+        audio = Audio(
+            audio_type='family-history',
+            file=audio_file.filename,
+            medical_record_number=medical_record_number
+        )
+        audio.add_audio()
+        audio_success = True
+    
+    if audio_success:
+        return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
+    else:
+        flash('Please submit an audio file!', 'danger')
+
+    return render_template('./doctor/record-family-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+
 
 
 @application.route('/doctor/patient/<string:medical_record_number>/social-history/record', methods=['POST', 'GET'])
 @login_required
 def record_social_history_record(medical_record_number):
-    print(request.files)
+    patient = Patient.get_patient(medical_record_number)
+    date, time = patient['created_at'].strftime(
+        "%d %B %Y"), patient['created_at'].strftime("%H:%M")
+    mr_num = patient['medical_record_number']
+    nurse_name = patient['recorded_by'].split()[0].capitalize()
+
+    audio_success = False
     if 'audio_data' in request.files:
-        file = request.files['audio_data']
+        audio_file = request.files['audio_data']
         file_name = f'{medical_record_number}.mp3'
-        audio_path = os.path.join(
-            'static', 'audio', 'social-history', file_name)
-        file.save(audio_path)
-        # transcribe_audio(audio_path)
-    return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
+        audio = Audio(
+            audio_type='social-history',
+            file=audio_file.filename,
+            medical_record_number=medical_record_number
+        )
+        audio.add_audio()
+        audio_success = True
+    
+    if audio_success:
+        return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
+    else:
+        flash('Please submit an audio file!', 'danger')
+
+    return render_template('./doctor/record-social-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)

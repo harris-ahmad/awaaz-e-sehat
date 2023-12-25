@@ -400,7 +400,7 @@
             </div>
 
             <!-- <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-primary mt-3 no-print" style="width: 100%;">Start Recording</a> -->
-            <form id="audioForm" action="/your_flask_endpoint" method="post" enctype="multipart/form-data"
+            <form id="audioForm" action="{{ url_for('record_medical_history', medical_record_number=mr_num) }}" method="POST"
                 style="display: none;">
                 <input type="file" id="audioInput" name="audio_data" accept=".mp3">
                 <input type="submit" value="Send">
@@ -538,6 +538,40 @@
                 }
             });
             document.getElementById('submitRecordingBtn').disabled = true; // Disable submit button after sending
+            document.getElementById('retryRecordingBtn').disabled = true;
+            document.getElementById('startRecordingBtn').disabled = true;
+            document.getElementById('stopRecordingBtn').disabled = true;
+            document.getElementById('timer').style.display = 'none';
+
+            if (document.getElementById('audioPlayback').src === "") {
+                let warningMsg = document.createElement('div');
+                warningMsg.classList.add('alert', 'alert-warning', 'mt-3');
+                warningMsg.textContent = 'Please submit the audio file first!';
+                document.querySelector('.patient-details-container').appendChild(warningMsg);
+                // Hide the warning message after 5 seconds
+                setTimeout(() => {
+                    warningMsg.style.display = 'none';
+                }, 5000);
+
+                // enable all the necessary buttons
+                document.getElementById('submitRecordingBtn').disabled = false;
+                document.getElementById('retryRecordingBtn').disabled = false;
+                document.getElementById('startRecordingBtn').disabled = false;
+                document.getElementById('stopRecordingBtn').disabled = true;
+                document.getElementById('timer').style.display = 'none';
+                return;
+            } else {
+                let successMsg = document.createElement('div');
+                successMsg.classList.add('alert', 'alert-success', 'mt-3');
+                successMsg.textContent = 'Audio file submitted successfully!';
+                document.querySelector('.patient-details-container').appendChild(successMsg);
+                // Hide the success message after 5 seconds
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 5000);
+
+                window.location.href = "/doctor/patient/{{ mr_num }}/family-history/record";
+            }
         });
 
 
