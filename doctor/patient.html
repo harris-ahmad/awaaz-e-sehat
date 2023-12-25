@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +8,60 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>Patient Details - {{ mr_num }}</title>
     <style>
+        .instructions-container {
+            background-color: #eef2f7;
+            /* Light blue background for visibility */
+            border-left: 4px solid #007bff;
+            /* Blue border on the left for importance */
+            padding: 10px 20px;
+            /* Padding for space inside the container */
+            margin-bottom: 20px;
+            /* Margin to separate it from the rest of the content */
+            border-radius: 4px;
+            /* Rounded corners */
+        }
+
+        .instructions-container p {
+            margin-bottom: 10px;
+            /* Space between paragraphs */
+        }
+
+        .instructions-container strong {
+            color: #0056b3;
+            /* Darker blue for emphasis */
+        }
+
+        #toggleAllBtn {
+            transition: all 0.3s ease;
+            /* Smooth transition for hover effects */
+            border: none;
+            /* Removes the default border */
+        }
+
+        #toggleAllBtn:hover,
+        #toggleAllBtn:focus {
+            background-color: #17a2b8;
+            /* A slightly darker shade for the hover state */
+            box-shadow: 0 4px 8px 0 rgba(0, 123, 255, 0.5);
+            /* Enhanced shadow for a "raised" effect on hover */
+            transform: translateY(-2px);
+            /* Slight raise effect on hover */
+        }
+
+        #toggleAllBtn:active {
+            transform: translateY(-1px);
+            /* Slight push effect when clicked */
+            box-shadow: 0 2px 4px 0 rgba(0, 123, 255, 0.5);
+            /* Smaller shadow for clicked state */
+        }
+
         .patient-details-container {
             background-color: #f8f9fa;
             border-radius: 5px;
             padding: 20px;
             margin-top: 20px;
         }
+
         .detail-header {
             background-color: #e9ecef;
             border-radius: 5px 5px 0 0;
@@ -20,12 +69,89 @@
             margin: -20px -20px 20px;
             border-bottom: 1px solid #dee2e6;
         }
+
         .detail-item {
             margin-bottom: 10px;
         }
+
         .detail-item strong {
             width: 150px;
             display: inline-block;
+        }
+
+        /* Additional styling for Patient Vitals and Medical History toggles */
+        .toggle-header {
+            cursor: pointer;
+            padding: 12px 20px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .toggle-header:hover {
+            background-color: #dde5ea;
+        }
+
+        .toggle-title {
+            font-weight: bold;
+            color: #495057;
+            user-select: none;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-header.collapsed .toggle-icon {
+            transform: rotate(0deg);
+        }
+
+        .toggle-header .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .expanded-area {
+            padding: 15px;
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #eaecef;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item strong {
+            display: block;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .detail-item span {
+            display: block;
+            color: #6c757d;
+        }
+
+        /* Adjustments for better responsiveness */
+        @media (max-width: 768px) {
+
+            .detail-item strong,
+            .detail-item span {
+                display: inline-block;
+                margin-right: 10px;
+            }
         }
 
         @media print {
@@ -35,6 +161,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container mt-5">
         <div class="patient-details-container">
@@ -43,11 +170,13 @@
                 <p><em>Date of creation: {{ date }} at {{ time }}</em></p>
                 <p><em>Recorded by: {{ nurse_name }}</em></p>
             </div>
-            <div class="d-flex justify-content-between align-items-center"style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-vitals" aria-expanded="false" aria-controls="expandableArea">
+            <div class="toggle-header d-flex justify-content-between align-items-center"
+                style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse"
+                data-target="#expandableArea-vitals" aria-expanded="false" aria-controls="expandableArea">
                 <span><strong>Patient Vitals</strong></span>
                 <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
             </div>
-            <div class="collapse w-100" id="expandableArea-vitals">
+            <div class="expanded-area collapse w-100" id="expandableArea-vitals">
                 <div class="detail-item">
                     <strong>Medical Number:</strong> <span>{{ patient.medical_record_number }}</span>
                 </div>
@@ -57,7 +186,7 @@
                 <div class="detail-item">
                     <strong>Age:</strong> <span>{{ patient.patient_age }}</span>
                 </div>
-                
+
                 <!-- Add more patient details in the same pattern -->
                 <div class="detail-item">
                     <strong>Condition:</strong> <span>{{ patient.patient_type }}</span>
@@ -107,18 +236,21 @@
                 </div>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center" style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-medicalhist" aria-expanded="false" aria-controls="expandableArea">
+            <div class="toggle-header d-flex justify-content-between align-items-center"
+                style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse"
+                data-target="#expandableArea-medicalhist" aria-expanded="false" aria-controls="expandableArea">
                 <span><strong>Medical History</strong></span>
                 <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
             </div>
-            
-            <div class="collapse w-100" id="expandableArea-medicalhist">
+
+            <div class="expanded-area collapse w-100" id="expandableArea-medicalhist">
                 <div id="personalDetailsSection" class="mb-3" style="padding-left: 20px;">
-                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#personalDetails" aria-expanded="false" aria-controls="personalDetails">
+                    <div class="toggle-header d-flex justify-content-between" data-toggle="collapse"
+                        data-target="#personalDetails" aria-expanded="false" aria-controls="personalDetails">
                         <span><strong>Personal Details</strong></span>
                         <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
                     </div>
-                    <div id="personalDetails" class="collapse show">
+                    <div id="personalDetails" class="expanded-area collapse show">
                         <div class="row" style="padding-left: 20px;">
                             <div class="col-md-6">
                                 <p>Blood Group Self</p>
@@ -139,12 +271,13 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="d-flex justify-content-between"  data-toggle="collapse" data-target="#husbandDetails" aria-expanded="false" aria-controls="husbandDetails">
+
+                    <div class="toggle-header d-flex justify-content-between" data-toggle="collapse"
+                        data-target="#husbandDetails" aria-expanded="false" aria-controls="husbandDetails">
                         <span><strong>Husband Details</strong></span>
                         <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
                     </div>
-                    <div id="husbandDetails" class="collapse show">
+                    <div id="husbandDetails" class="expanded-area collapse show">
                         <div class="row" style="padding-left: 20px;">
                             <div class="col-md-6">
                                 <p>Name</p>
@@ -156,11 +289,12 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#medicalHistory" aria-expanded="flase" aria-controls="medicalHistory">
+                    <div class="toggle-header d-flex justify-content-between" data-toggle="collapse"
+                        data-target="#medicalHistory" aria-expanded="flase" aria-controls="medicalHistory">
                         <span><strong>Medical History</strong></span>
                         <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
                     </div>
-                    <div id="medicalHistory" class="collapse show">
+                    <div id="medicalHistory" class="collapse show expanded-area">
                         <div class="row" style="padding-left: 20px;">
                             <div class="col-md-6">
                                 <p>Diabetes</p>
@@ -175,11 +309,12 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#surgicalHistory" aria-expanded="false" aria-controls="surgicalHistory">
+                    <div class="toggle-header d-flex justify-content-between" data-toggle="collapse"
+                        data-target="#surgicalHistory" aria-expanded="false" aria-controls="surgicalHistory">
                         <span><strong>Surgical History</strong></span>
                         <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
                     </div>
-                    <div id="surgicalHistory" class="collapse show">
+                    <div id="surgicalHistory" class="collapse show expanded-area">
                         <div class="row" style="padding-left: 20px;">
                             <div class="col-md-6">
                                 <p>Blood Transfusion</p>
@@ -192,8 +327,10 @@
 
                 </div>
             </div>
-            
-            <div class="d-flex justify-content-between align-items-center" style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-familyhist" aria-expanded="false" aria-controls="expandableArea">
+
+            <div class="toggle-header d-flex justify-content-between align-items-center"
+                style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse"
+                data-target="#expandableArea-familyhist" aria-expanded="false" aria-controls="expandableArea">
                 <span><strong>Family History</strong></span>
                 <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
             </div>
@@ -201,12 +338,13 @@
             <div class="collapse w-100" id="expandableArea-familyhist">
                 <div id="familyHistorySection" class="mb-3" style="padding-left: 20px;">
 
-                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#familyHistory" aria-expanded="false" aria-controls="familyHistory">
+                    <div class="toggle-header d-flex justify-content-between" data-toggle="collapse"
+                        data-target="#familyHistory" aria-expanded="false" aria-controls="familyHistory">
                         <span><strong>Patient's Family History</strong></span>
                         <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
                     </div>
 
-                    <div id="familyHistory" class="collapse show">
+                    <div id="familyHistory" class="collapse show expanded-area">
                         <div class="row" style="padding-left: 20px;">
                             <div class="col-md-6">
                                 <p>Diabetes</p>
@@ -219,12 +357,13 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#husbandFamilyHistory" aria-expanded="false" aria-controls="husbandFamilyHistory">
+                    <div class="toggle-header d-flex justify-content-between" data-toggle="collapse"
+                        data-target="#husbandFamilyHistory" aria-expanded="false" aria-controls="husbandFamilyHistory">
                         <span><strong>Husband's Family History</strong></span>
                         <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
                     </div>
 
-                    <div id="husbandFamilyHistory" class="collapse show">
+                    <div id="husbandFamilyHistory" class="collapse show expanded-area">
                         <div class="row" style="padding-left: 20px;">
                             <div class="col-md-6">
                                 <p>Diabetes</p>
@@ -239,17 +378,19 @@
 
                 </div>
             </div>
-            
 
-            <div class="d-flex justify-content-between align-items-center" style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-socio" aria-expanded="false" aria-controls="expandableArea">
+
+            <div class="toggle-header d-flex justify-content-between align-items-center"
+                style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse"
+                data-target="#expandableArea-socio" aria-expanded="false" aria-controls="expandableArea">
                 <span><strong>Socioeconomic History</strong></span>
                 <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
             </div>
 
             <div class="collapse w-100" id="expandableArea-socio">
                 <div id="socioeconomicHistory" class="mb-3" style="padding-left: 20px;">
-    
-                    <div id="socioeconomicHistory" class="collapse show">
+
+                    <div id="socioeconomicHistory" class="collapse show expanded-area">
                         <div class="row" style="padding-left: 20px;">
                             <div class="col-md-6">
                                 <p>Number of family members</p>
@@ -265,7 +406,9 @@
                 </div>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center" style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-prevpreg" aria-expanded="false" aria-controls="expandableArea">
+            <div class="toggle-header d-flex justify-content-between align-items-center"
+                style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse"
+                data-target="#expandableArea-prevpreg" aria-expanded="false" aria-controls="expandableArea">
                 <span><strong>Previous Pregnancies (if any)</strong></span>
                 <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
             </div>
@@ -273,7 +416,7 @@
             <div class="collapse w-100" id="expandableArea-prevpreg">
                 <div id="previousPregnancies" class="mb-3" style="padding-left: 20px;">
 
-                    <div id="prevPregnancies" class="collapse show">
+                    <div id="prevPregnancies" class="collapse show expanded-area">
                         <div class="row" style="padding-left: 20px;">
                             <div class="col-md-6">
                                 <p>Year of birth</p>
@@ -297,14 +440,16 @@
                 </div>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center" style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-condbooking" aria-expanded="false" aria-controls="expandableArea">
+            <div class="toggle-header d-flex justify-content-between align-items-center"
+                style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse"
+                data-target="#expandableArea-condbooking" aria-expanded="false" aria-controls="expandableArea">
                 <span><strong>Condition At Booking</strong></span>
                 <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
             </div>
 
             <div class="collapse w-100" id="expandableArea-condbooking">
                 <div id="condAtBooking" class="mb-3" style="padding-left: 20px;">
-                    <div id="conditionAtBooking" class="collapse show">
+                    <div id="conditionAtBooking" class="collapse show expanded-area">
                         <div class="row" style="padding-left: 20px;">
                             <div class="col-md-6">
                                 <p>Oral & Dental Hygiene</p>
@@ -322,7 +467,9 @@
             </div>
 
 
-            <div class="d-flex justify-content-between align-items-center" style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-prespreg" aria-expanded="false" aria-controls="expandableArea">
+            <div class="toggle-header d-flex justify-content-between align-items-center"
+                style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse"
+                data-target="#expandableArea-prespreg" aria-expanded="false" aria-controls="expandableArea">
                 <span><strong>Present Pregnancy</strong></span>
                 <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
             </div>
@@ -330,14 +477,15 @@
             <div class="collapse w-100" id="expandableArea-prespreg">
                 <div id="presentPregnancies" class="mb-3" style="padding-left: 20px;">
 
-                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#presentPregDetails" aria-expanded="false" aria-controls="presentPregDetails">
+                    <div class="toggle-header d-flex justify-content-between" data-toggle="collapse"
+                        data-target="#presentPregDetails" aria-expanded="false" aria-controls="presentPregDetails">
                         <span><strong>Present Pregnancy Details</strong></span>
                         <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
                     </div>
 
                     <div class="collapse w-100" id="presentPregDetails">
                         <div id="presentPregnancies" class="mb-3" style="padding-left: 20px;">
-                            <div id="presentPregnancies" class="collapse show">
+                            <div id="presentPregnancies" class="collapse show expanded-area">
                                 <div class="row" style="padding-left: 20px;">
                                     <div class="col-md-6">
                                         <p>Height Symphysis Pubis</p>
@@ -351,14 +499,15 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#concernsRisks" aria-expanded="false" aria-controls="concernsRisks">
+                    <div class="toggle-header d-flex justify-content-between" data-toggle="collapse"
+                        data-target="#concernsRisks" aria-expanded="false" aria-controls="concernsRisks">
                         <span><strong>Concerns & Risk Factors</strong></span>
                         <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
                     </div>
 
                     <div class="collapse w-100" id="concernsRisks">
                         <div id="concernRisks" class="mb-3" style="padding-left: 20px;">
-                            <div id="concernRisks" class="collapse show">
+                            <div id="concernRisks" class="collapse show expanded-area">
                                 <div class="row" style="padding-left: 20px;">
                                     <div class="col-md-6">
                                         <p>Burning micturition</p>
@@ -382,15 +531,17 @@
 
                 </div>
             </div>
-            
-            <div class="d-flex justify-content-between align-items-center" style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse" data-target="#expandableArea-propplan" aria-expanded="false" aria-controls="expandableArea">
+
+            <div class="toggle-header d-flex justify-content-between align-items-center"
+                style="width: 100%; border-bottom: 1px solid #ccc; padding-bottom: 10px;" data-toggle="collapse"
+                data-target="#expandableArea-propplan" aria-expanded="false" aria-controls="expandableArea">
                 <span><strong>Proposed Plan</strong></span>
                 <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
             </div>
 
             <div class="collapse w-100" id="expandableArea-propplan">
                 <div id="propPlan" class="mb-3" style="padding-left: 20px;">
-                    <div id="propPlan" class="collapse show">
+                    <div id="propPlan" class="collapse show expanded-area">
                         <div class="row" style="padding-left: 20px;">
                             <div class="col-md-6">
                                 <p>Differential diagnosis</p>
@@ -403,13 +554,15 @@
             </div>
 
 
-
             <div class="container" style="padding-top: 20px;">
-                <p><strong>Instructions:</strong></p>
-                <p>You will be recording the following patient data. Click continue to start recording.</p>
+                <div class="instructions-container">
+                    <p><strong>Instructions:</strong></p>
+                    <p>You will now be recording the above patient data. Click continue to start recording.</p>
+                </div>
             </div>
 
-            <a href="{{ url_for('record_medical_history', medical_record_number=patient.medical_record_number) }}" class="btn btn-primary mt-3" style="width: 100%;">Continue</a>
+            <a href="{{ url_for('record_medical_history', medical_record_number=patient.medical_record_number) }}"
+                class="btn btn-primary mt-3" style="width: 100%;">Continue</a>
         </div>
 
         <!-- <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-primary mt-3 no-print">Back to Dashboard</a> -->
@@ -426,4 +579,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
