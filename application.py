@@ -358,6 +358,15 @@ def page_not_found(e):
 def server_error(e):
     return render_template('500.html'), 500
 
+
+@application.errorhandler(403)
+def forbidden(e):
+    return '''
+    <h1>Forbidden</h1>
+    <p>The server understood the request but refuses to authorize it.</p>
+    ''', 403
+
+
 ########################################## HOME ##########################################
 
 
