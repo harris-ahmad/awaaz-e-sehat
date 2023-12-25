@@ -735,10 +735,11 @@ def doctor_search():
                 {'full_name': {'$regex': searched, '$options': 'i'}},
                 {'medical_record_number': {'$regex': searched, '$options': 'i'}},
             ]})
-            if patients.count() == 0:
+            if patients.distinct('medical_record_number') == []:
                 flash('No patient found!', 'danger')
                 return redirect(url_for('doctor_dashboard'))
-            return redirect(url_for('doctor_patient', medical_record_number=patients[0]['medical_record_number']))
+            else:
+                return redirect(url_for('doctor_patient', medical_record_number=patients[0]['medical_record_number']))
     return redirect(url_for('doctor_dashboard'))
 
 
