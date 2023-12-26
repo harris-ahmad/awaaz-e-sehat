@@ -8,6 +8,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>Patient Details - {{ mr_num }}</title>
     <style>
+        .instructions-container {
+            background-color: #eef2f7;
+            /* Light blue background for visibility */
+            border-left: 4px solid #007bff;
+            /* Blue border on the left for importance */
+            padding: 10px 20px;
+            /* Padding for space inside the container */
+            margin-bottom: 20px;
+            /* Margin to separate it from the rest of the content */
+            border-radius: 4px;
+            /* Rounded corners */
+        }
+
+        .instructions-container p {
+            margin-bottom: 10px;
+            /* Space between paragraphs */
+        }
+
+        .instructions-container strong {
+            color: #0056b3;
+            /* Darker blue for emphasis */
+        }
+
         #toggleAllBtn {
             transition: all 0.3s ease;
             /* Smooth transition for hover effects */
@@ -30,29 +53,6 @@
             /* Slight push effect when clicked */
             box-shadow: 0 2px 4px 0 rgba(0, 123, 255, 0.5);
             /* Smaller shadow for clicked state */
-        }
-
-        .instructions-container {
-            background-color: #eef2f7;
-            /* Light blue background for visibility */
-            border-left: 4px solid #007bff;
-            /* Blue border on the left for importance */
-            padding: 10px 20px;
-            /* Padding for space inside the container */
-            margin-bottom: 20px;
-            /* Margin to separate it from the rest of the content */
-            border-radius: 4px;
-            /* Rounded corners */
-        }
-
-        .instructions-container p {
-            margin-bottom: 10px;
-            /* Space between paragraphs */
-        }
-
-        .instructions-container strong {
-            color: #0056b3;
-            /* Darker blue for emphasis */
         }
 
         .patient-details-container {
@@ -79,12 +79,88 @@
             display: inline-block;
         }
 
+        /* Additional styling for Patient Vitals and Medical History toggles */
+        .toggle-header {
+            cursor: pointer;
+            padding: 12px 20px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .toggle-header:hover {
+            background-color: #dde5ea;
+        }
+
+        .toggle-title {
+            font-weight: bold;
+            color: #495057;
+            user-select: none;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-header.collapsed .toggle-icon {
+            transform: rotate(0deg);
+        }
+
+        .toggle-header .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .expanded-area {
+            padding: 15px;
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #eaecef;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item strong {
+            display: block;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .detail-item span {
+            display: block;
+            color: #6c757d;
+        }
+
+        /* Adjustments for better responsiveness */
+        @media (max-width: 768px) {
+
+            .detail-item strong,
+            .detail-item span {
+                display: inline-block;
+                margin-right: 10px;
+            }
+        }
+
         @media print {
             .no-print {
                 display: none;
             }
         }
     </style>
+
 </head>
 
 <body>
@@ -111,10 +187,10 @@
                     <strong>Medical Number:</strong> <span>{{ patient.medical_record_number }}</span>
                 </div>
                 <div class="detail-item">
-                    <strong>Name:</strong> <span>{{ patient.patient_name }}</span>
+                    <strong>Name:</strong> <span>{{ patient.full_name }}</span>
                 </div>
                 <div class="detail-item">
-                    <strong>Age:</strong> <span>{{ patient.patient_age }}</span>
+                    <strong>Age:</strong> <span>{{ patient.age }}</span>
                 </div>
 
                 <!-- Add more patient details in the same pattern -->
@@ -198,7 +274,8 @@
         <div class="container" style="padding-top: 20px;">
             <div class="instructions-container">
                 <p><strong>Instructions:</strong></p>
-                <p>You will be recording the patient's previous pregnancies now. Please record them in <em>chronological order.</em></p>
+                <p>You will be recording the patient's previous pregnancies now. Please record them in <em>chronological
+                        order.</em></p>
                 <p><em>If the patient has no previously recorded family history, please make sure to record.</em>
                 </p>
                 <p><strong>Before recording, please expand the toggles above and review the variables that you need to
@@ -234,6 +311,12 @@
 
     <script>
 
+        document.querySelectorAll('.toggle-header').forEach(function (header) {
+            header.addEventListener('click', function () {
+                this.classList.toggle('collapsed');
+            });
+        });
+
         function toggleAllSections() {
             // This will toggle the 'show' class on both sections
             let allCollapsibles = document.querySelectorAll('.collapse');
@@ -247,7 +330,7 @@
 
             // change the text of the toggle button to "Close All Sections" once it's been toggled
             let toggleAllBtn = document.getElementById("toggleAllBtn");
-            
+
             allChevronToggles.forEach(function (toggle) {
                 let chevron = toggle.querySelector('.fas');
                 if (chevron.classList.contains('fa-chevron-down')) {
@@ -337,7 +420,7 @@
             // AJAX request to submit the audio file to the Flask endpoint
             console.log('Sending audio file...');
             $.ajax({
-                url: "/doctor/patient/{{ mr_num }}/family-history/record",
+                url: "/doctor/patient/{{ mr_num }}/prev-preg/record",
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -349,7 +432,42 @@
                     console.log('Error:', error);
                 }
             });
+            
             document.getElementById('submitRecordingBtn').disabled = true; // Disable submit button after sending
+            document.getElementById('retryRecordingBtn').disabled = true;
+            document.getElementById('startRecordingBtn').disabled = true;
+            document.getElementById('stopRecordingBtn').disabled = true;
+            document.getElementById('timer').style.display = 'none';
+
+            if (document.getElementById('audioPlayback').src === "") {
+                let warningMsg = document.createElement('div');
+                warningMsg.classList.add('alert', 'alert-warning', 'mt-3');
+                warningMsg.textContent = 'Please submit the audio file first!';
+                document.querySelector('.patient-details-container').appendChild(warningMsg);
+                // Hide the warning message after 5 seconds
+                setTimeout(() => {
+                    warningMsg.style.display = 'none';
+                }, 5000);
+
+                // enable all the necessary buttons
+                document.getElementById('submitRecordingBtn').disabled = false;
+                document.getElementById('retryRecordingBtn').disabled = false;
+                document.getElementById('startRecordingBtn').disabled = false;
+                document.getElementById('stopRecordingBtn').disabled = true;
+                document.getElementById('timer').style.display = 'none';
+                return;
+            } else {
+                let successMsg = document.createElement('div');
+                successMsg.classList.add('alert', 'alert-success', 'mt-3');
+                successMsg.textContent = 'Audio file submitted successfully!';
+                document.querySelector('.patient-details-container').appendChild(successMsg);
+                // Hide the success message after 5 seconds
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 5000);
+
+                window.location.href = "/doctor/patient/{{ mr_num }}/prop-plan/record";
+            }
         });
 
 

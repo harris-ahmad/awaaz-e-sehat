@@ -525,7 +525,7 @@
             // AJAX request to submit the audio file to the Flask endpoint
             console.log('Sending audio file...');
             $.ajax({
-                url: "/doctor/patient/{{ mr_num }}/medical-history/record",
+                url: "/doctor/patient/{{ mr_num }}/family-history/record",
                 type: 'POST',
                 data: formData,
                 processData: false,

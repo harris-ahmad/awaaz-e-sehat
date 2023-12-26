@@ -227,7 +227,13 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        
+
+        document.querySelectorAll('.toggle-header').forEach(function (header) {
+            header.addEventListener('click', function () {
+                this.classList.toggle('collapsed');
+            });
+        });
+
         function toggleAllSections() {
             // This will toggle the 'show' class on both sections
             let allCollapsibles = document.querySelectorAll('.collapse');
@@ -241,7 +247,7 @@
 
             // change the text of the toggle button to "Close All Sections" once it's been toggled
             let toggleAllBtn = document.getElementById("toggleAllBtn");
-            
+
             allChevronToggles.forEach(function (toggle) {
                 let chevron = toggle.querySelector('.fas');
                 if (chevron.classList.contains('fa-chevron-down')) {
@@ -289,96 +295,112 @@
             document.getElementById('timer').textContent = "00:00:00";
         }
 
-        document.getElementById('startRecordingBtn').addEventListener('click', function() {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
+        document.getElementById('startRecordingBtn').addEventListener('click', function () {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
 
-            mediaRecorder.addEventListener("dataavailable", event => {
-                audioChunks.push(event.data);
-            });
+                    mediaRecorder.addEventListener("dataavailable", event => {
+                        audioChunks.push(event.data);
+                    });
 
-            mediaRecorder.addEventListener("stop", () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg-3' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                const audio = new File(audioChunks, 'audio.mp3', { type: 'audio/mpeg-3', lastModified: Date.now() });
-                document.getElementById('audioPlayback').src = audioUrl;
-                document.getElementById('audioPlayback').style.display = 'block';
+                    mediaRecorder.addEventListener("stop", () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg-3' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        const audio = new File(audioChunks, 'audio.mp3', { type: 'audio/mpeg-3', lastModified: Date.now() });
+                        document.getElementById('audioPlayback').src = audioUrl;
+                        document.getElementById('audioPlayback').style.display = 'block';
 
-                // Prepare the form for sending 
-                formData.append('audio_data', audio);
-            });
-            document.getElementById('retryRecordingBtn').disabled = false;
-            document.getElementById('timer').style.display = 'block';
-            startTimer();
-            document.getElementById('startRecordingBtn').disabled = true;
-            document.getElementById('stopRecordingBtn').disabled = false;
+                        // Prepare the form for sending 
+                        formData.append('audio_data', audio);
+                    });
+                    document.getElementById('retryRecordingBtn').disabled = false;
+                    document.getElementById('timer').style.display = 'block';
+                    startTimer();
+                    document.getElementById('startRecordingBtn').disabled = true;
+                    document.getElementById('stopRecordingBtn').disabled = false;
+                });
         });
-    });
 
-    document.getElementById('stopRecordingBtn').addEventListener('click', function() {
-        mediaRecorder.stop();
-        stopTimer();
-        document.getElementById('stopRecordingBtn').disabled = true;
-        document.getElementById('submitRecordingBtn').disabled = false;
-        document.getElementById('retryRecordingBtn').disabled = false;
-        document.getElementById('startRecordingBtn').disabled = false;
-        document.getElementById('timer').style.display = 'none';
-    });
+        document.getElementById('stopRecordingBtn').addEventListener('click', function () {
+            mediaRecorder.stop();
+            stopTimer();
+            document.getElementById('stopRecordingBtn').disabled = true;
+            document.getElementById('submitRecordingBtn').disabled = false;
+            document.getElementById('retryRecordingBtn').disabled = false;
+            document.getElementById('startRecordingBtn').disabled = false;
+            document.getElementById('timer').style.display = 'none';
+        });
 
-    document.getElementById('submitRecordingBtn').addEventListener('click', function() {
-        // AJAX request to submit the audio file to the Flask endpoint
-        console.log('Sending audio file...');
-        $.ajax({
-            url: "/doctor/patient/{{ mr_num }}/family-history/record",
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                console.log('Success:', response);
-            },
-            error: function(error) {
-                console.log('Error:', error);
+        document.getElementById('submitRecordingBtn').addEventListener('click', function () {
+            // AJAX request to submit the audio file to the Flask endpoint
+            console.log('Sending audio file...');
+            $.ajax({
+                url: "/doctor/patient/{{ mr_num }}/family-history/record",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log('Success:', response);
+                },
+                error: function (error) {
+                    console.log('Error:', error);
+                }
+            });
+            document.getElementById('submitRecordingBtn').disabled = true; // Disable submit button after sending
+            document.getElementById('retryRecordingBtn').disabled = true;
+            document.getElementById('startRecordingBtn').disabled = true;
+            document.getElementById('stopRecordingBtn').disabled = true;
+            document.getElementById('timer').style.display = 'none';
+
+            if (document.getElementById('audioPlayback').src === "") {
+                let warningMsg = document.createElement('div');
+                warningMsg.classList.add('alert', 'alert-warning', 'mt-3');
+                warningMsg.textContent = 'Please submit the audio file first!';
+                document.querySelector('.patient-details-container').appendChild(warningMsg);
+                // Hide the warning message after 5 seconds
+                setTimeout(() => {
+                    warningMsg.style.display = 'none';
+                }, 5000);
+
+                // enable all the necessary buttons
+                document.getElementById('submitRecordingBtn').disabled = false;
+                document.getElementById('retryRecordingBtn').disabled = false;
+                document.getElementById('startRecordingBtn').disabled = false;
+                document.getElementById('stopRecordingBtn').disabled = true;
+                document.getElementById('timer').style.display = 'none';
+                return;
+            } else {
+                let successMsg = document.createElement('div');
+                successMsg.classList.add('alert', 'alert-success', 'mt-3');
+                successMsg.textContent = 'Audio file submitted successfully!';
+                document.querySelector('.patient-details-container').appendChild(successMsg);
+                // Hide the success message after 5 seconds
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 5000);
+
+                window.location.href = "/doctor/patient/{{ mr_num }}/socio-hist/record";
             }
         });
-        document.getElementById('submitRecordingBtn').disabled = true; // Disable submit button after sending
-        document.getElementById('retryRecordingBtn').disabled = true;
-        document.getElementById('startRecordingBtn').disabled = true;
-        document.getElementById('stopRecordingBtn').disabled = true;
-        document.getElementById('timer').style.display = 'none';
-
-        // Show a success message
-        let successMsg = document.createElement('div');
-        successMsg.classList.add('alert', 'alert-success', 'mt-3');
-        successMsg.textContent = 'The audio file has been sent successfully!';
-        document.querySelector('.patient-details-container').appendChild(successMsg);
-
-        // Hide the success message after 5 seconds
-        setTimeout(() => {
-            successMsg.style.display = 'none';
-        }, 5000);
-
-        // navigate to social history page
-        window.location.href = "/doctor/patient/{{ mr_num }}/social-history/record";
-    });
 
 
-    function resetRecording() {
-        if (mediaRecorder && mediaRecorder.state !== "inactive") {
-            mediaRecorder.stop();
+        function resetRecording() {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                mediaRecorder.stop();
+            }
+            audioChunks = [];
+            document.getElementById('audioPlayback').style.display = 'none';
+            document.getElementById('startRecordingBtn').disabled = false;
+            document.getElementById('stopRecordingBtn').disabled = true;
+            document.getElementById('retryRecordingBtn').disabled = true;
+            stopTimer();
+            document.getElementById('timer').style.display = 'none';
         }
-        audioChunks = [];
-        document.getElementById('audioPlayback').style.display = 'none';
-        document.getElementById('startRecordingBtn').disabled = false;
-        document.getElementById('stopRecordingBtn').disabled = true;
-        document.getElementById('retryRecordingBtn').disabled = true;
-        stopTimer();
-        document.getElementById('timer').style.display = 'none';
-    }
 
-    document.getElementById('retryRecordingBtn').addEventListener('click', resetRecording);
+        document.getElementById('retryRecordingBtn').addEventListener('click', resetRecording);
 
     </script>
 
