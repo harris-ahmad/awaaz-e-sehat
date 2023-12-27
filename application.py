@@ -47,7 +47,8 @@ login_manager.blueprint_login_views = {
 
 
 class Nurse(UserMixin):
-    def __init__(self, employee_code, full_name, password, created_at=datetime.datetime.now()):
+    def __init__(self, employee_code, full_name, password,
+                 created_at=datetime.datetime.now()):
         super().__init__()
         self.employee_code = employee_code
         self.full_name = full_name
@@ -95,7 +96,8 @@ class Nurse(UserMixin):
 
 
 class Doctor(UserMixin):
-    def __init__(self, employee_code, full_name, password, created_at=datetime.datetime.now()):
+    def __init__(self, employee_code, full_name, password,
+                 created_at=datetime.datetime.now()):
         self.employee_code = employee_code
         self.full_name = full_name
         self.created_at = created_at
@@ -142,9 +144,11 @@ class Doctor(UserMixin):
 
 
 class Patient:
-    def __init__(self, medical_record_number, full_name, cnic, age, patient_type, weight_kg,
-                 height_cm, b_bp_sys, b_bp_dia, temperature, pulse, bsr, urine_albumin, hb,
-                 spO2, created_at=datetime.datetime.now(), visit_number=1) -> None:
+    def __init__(
+            self, medical_record_number, full_name, cnic, age, patient_type, weight_kg,
+            height_cm, b_bp_sys, b_bp_dia, temperature, pulse, bsr, urine_albumin, hb,
+            spO2, created_at=datetime.datetime.now(),
+            visit_number=1) -> None:
         self.medical_record_number = medical_record_number
         self.full_name = full_name
         self.cnic = cnic
@@ -231,6 +235,14 @@ class Audio:
         collection = db['audios']
         existing_audio = collection.find_one(
             {'medical_record_number': self.medical_record_number})
+        if not existing_audio or existing_audio['audio_type'] != self.audio_type:
+            new_audio = dict(
+                audio_type=self.audio_type,
+                audio_binary=self.audio_binary,
+                medical_record_number=self.medical_record_number
+            )
+            collection.insert_one(new_audio)
+            return True
         if existing_audio is None:
             new_audio = dict(
                 audio_type=self.audio_type,
@@ -282,12 +294,20 @@ def load_user(user_id):
         user = Doctor.get_doctor(user_id)
         if not user:
             return None
-        return Doctor(user['employee_code'], user['full_name'], user['password'], user['created_at'])
+        return Doctor(
+            user['employee_code'],
+            user['full_name'],
+            user['password'],
+            user['created_at'])
     elif role == 'nurse':
         user = Nurse.get_nurse(user_id)
         if not user:
             return None
-        return Nurse(user['employee_code'], user['full_name'], user['password'], user['created_at'])
+        return Nurse(
+            user['employee_code'],
+            user['full_name'],
+            user['password'],
+            user['created_at'])
     else:
         return None
 
@@ -500,7 +520,11 @@ def nurse_search():
             flash('No patient found!', 'danger')
             return redirect(url_for('nurse_dashboard'))
         else:
-            return redirect(url_for('nurse_patient', medical_record_number=patients[0]['medical_record_number']))
+            return redirect(
+                url_for(
+                    'nurse_patient',
+                    medical_record_number=patients[0]
+                    ['medical_record_number']))
     return redirect(url_for('nurse_dashboard'))
 
 
@@ -514,7 +538,9 @@ def nurse_patient(medical_record_number):
     nurse_name = patient['recorded_by'].split()[0].capitalize()
     full_name = patient['full_name']
     age = patient['age']
-    return render_template('./nurse/patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name, full_name=full_name, age=age)
+    return render_template(
+        './nurse/patient.html', patient=patient, date=date, time=time, mr_num=mr_num,
+        nurse_name=nurse_name, full_name=full_name, age=age)
 
 
 @application.route('/nurse/patients/<string:medical_record_number>/download')
@@ -528,8 +554,9 @@ def nurse_download(medical_record_number):
     nurse_name = nurse_name.split()[0].capitalize()
     full_name = patient['full_name']
     age = patient['age']
-    rendered = render_template('./nurse/patient.html', patient=patient,
-                               date=date, time=time, mr_num=mr_num, nurse_name=nurse_name, full_name=full_name, age=age)
+    rendered = render_template(
+        './nurse/patient.html', patient=patient, date=date, time=time, mr_num=mr_num,
+        nurse_name=nurse_name, full_name=full_name, age=age)
     pdf = weasyprint.HTML(string=rendered).write_pdf()
     response = application.make_response(pdf)
     response.headers['Content-Type'] = 'application/pdf'
@@ -693,7 +720,11 @@ def doctor_search():
                 flash('No patient found!', 'danger')
                 return redirect(url_for('doctor_dashboard'))
             else:
-                return redirect(url_for('doctor_patient', medical_record_number=patients[0]['medical_record_number']))
+                return redirect(
+                    url_for(
+                        'doctor_patient',
+                        medical_record_number=patients[0]
+                        ['medical_record_number']))
     return redirect(url_for('doctor_dashboard'))
 
 
@@ -721,10 +752,16 @@ def doctor_patient(medical_record_number):
         "%d %B %Y"), patient['created_at'].strftime("%H:%M")
     mr_num = patient['medical_record_number']
     nurse_name = patient['recorded_by'].split()[0].capitalize()
-    return render_template('./doctor/patient.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+    full_name = patient['full_name']
+    age = patient['age']
+    return render_template(
+        './doctor/patient.html', patient=patient, date=date, time=time, mr_num=mr_num,
+        nurse_name=nurse_name, full_name=full_name, age=age)
 
 
-@application.route('/doctor/patient/<string:medical_record_number>/medical-history/record', methods=['POST', 'GET'])
+@application.route(
+    '/doctor/patient/<string:medical_record_number>/medical-history/record',
+    methods=['POST', 'GET'])
 @login_required
 def record_medical_history(medical_record_number):
     patient = Patient.get_patient(medical_record_number)
@@ -769,22 +806,31 @@ def record_medical_history(medical_record_number):
     if 'audio_data' in request.files:
         audio_file = request.files['audio_data']
         file_name = f'{medical_record_number}.mp3'
+        audio_path = os.path.join(
+            application.root_path, 'static', 'audio', file_name)
+        audio_file.save(audio_path)
         audio = Audio(
             audio_type='medical-history',
-            file=audio_file,
+            file=audio_path,
             medical_record_number=medical_record_number
         )
         audio.add_audio()
         audio_success = True
 
     if form_success and audio_success:
-        return redirect(url_for('record_family_history', medical_record_number=medical_record_number))
+        return redirect(
+            url_for(
+                'record_family_history',
+                medical_record_number=medical_record_number))
     else:
         flash('Please fill all the fields!', 'danger')
-    return render_template('./doctor/record-medical-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name, form=form)
+    return render_template(
+        './doctor/record-medical-hist.html', patient=patient, date=date, time=time,
+        mr_num=mr_num, nurse_name=nurse_name, form=form)
 
 
-@application.route('/doctor/patient/<string:medical_record_number>/family-history/record', methods=['POST', 'GET'])
+@application.route('/doctor/patient/<string:medical_record_number>/family-history/record',
+                   methods=['POST', 'GET'])
 @login_required
 def record_family_history_record(medical_record_number):
     patient = Patient.get_patient(medical_record_number)
@@ -797,24 +843,32 @@ def record_family_history_record(medical_record_number):
     if 'audio_data' in request.files:
         audio_file = request.files['audio_data']
         file_name = f'{medical_record_number}.mp3'
+        audio_path = os.path.join(
+            application.root_path, 'static', 'audio', file_name)
+        audio_file.save(audio_path)
         audio = Audio(
             audio_type='family-history',
-            file=audio_file.filename,
+            file=audio_path,
             medical_record_number=medical_record_number
         )
         audio.add_audio()
         audio_success = True
-    
+
     if audio_success:
-        return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
+        return redirect(
+            url_for(
+                'doctor_patient',
+                medical_record_number=medical_record_number))
     else:
         flash('Please submit an audio file!', 'danger')
 
-    return render_template('./doctor/record-family-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+    return render_template(
+        './doctor/record-family-hist.html', patient=patient, date=date, time=time,
+        mr_num=mr_num, nurse_name=nurse_name)
 
 
-
-@application.route('/doctor/patient/<string:medical_record_number>/social-history/record', methods=['POST', 'GET'])
+@application.route('/doctor/patient/<string:medical_record_number>/socio-hist/record',
+                   methods=['POST', 'GET'])
 @login_required
 def record_social_history_record(medical_record_number):
     patient = Patient.get_patient(medical_record_number)
@@ -827,17 +881,139 @@ def record_social_history_record(medical_record_number):
     if 'audio_data' in request.files:
         audio_file = request.files['audio_data']
         file_name = f'{medical_record_number}.mp3'
+        audio_path = os.path.join(
+            application.root_path, 'static', 'audio', file_name)
+        audio_file.save(audio_path)
         audio = Audio(
-            audio_type='social-history',
-            file=audio_file.filename,
+            audio_type='socioeconomic-history',
+            file=audio_path,
             medical_record_number=medical_record_number
         )
         audio.add_audio()
         audio_success = True
-    
+
     if audio_success:
-        return redirect(url_for('doctor_patient', medical_record_number=medical_record_number))
+        return redirect(
+            url_for(
+                'doctor_patient',
+                medical_record_number=medical_record_number))
     else:
         flash('Please submit an audio file!', 'danger')
 
-    return render_template('./doctor/record-social-hist.html', patient=patient, date=date, time=time, mr_num=mr_num, nurse_name=nurse_name)
+    return render_template(
+        './doctor/record-socio-hist.html', patient=patient, date=date, time=time,
+        mr_num=mr_num, nurse_name=nurse_name)
+
+
+@application.route('/doctor/patient/<string:medical_record_number>/prev-preg/record',
+                   methods=['POST', 'GET'])
+@login_required
+def record_prev_preg_record(medical_record_number):
+    patient = Patient.get_patient(medical_record_number)
+    date, time = patient['created_at'].strftime(
+        "%d %B %Y"), patient['created_at'].strftime("%H:%M")
+    mr_num = patient['medical_record_number']
+    nurse_name = patient['recorded_by'].split()[0].capitalize()
+
+    audio_success = False
+    if 'audio_data' in request.files:
+        audio_file = request.files['audio_data']
+        file_name = f'{medical_record_number}.mp3'
+        audio_path = os.path.join(
+            application.root_path, 'static', 'audio', file_name)
+        audio_file.save(audio_path)
+        audio = Audio(
+            audio_type='previous-pregnancies',
+            file=audio_path,
+            medical_record_number=medical_record_number
+        )
+        audio.add_audio()
+        audio_success = True
+
+    if audio_success:
+        return redirect(
+            url_for(
+                'doctor_patient',
+                medical_record_number=medical_record_number))
+    else:
+        flash('Please submit an audio file!', 'danger')
+
+    return render_template(
+        './doctor/record-prev-preg.html', patient=patient, date=date, time=time,
+        mr_num=mr_num, nurse_name=nurse_name)
+
+
+@application.route('/doctor/patient/<string:medical_record_number>/prop-plan/record',
+                   methods=['POST', 'GET'])
+@login_required
+def record_prop_plan_record(medical_record_number):
+    patient = Patient.get_patient(medical_record_number)
+    date, time = patient['created_at'].strftime(
+        "%d %B %Y"), patient['created_at'].strftime("%H:%M")
+    mr_num = patient['medical_record_number']
+    nurse_name = patient['recorded_by'].split()[0].capitalize()
+
+    audio_success = False
+    if 'audio_data' in request.files:
+        audio_file = request.files['audio_data']
+        file_name = f'{medical_record_number}.mp3'
+        audio_path = os.path.join(
+            application.root_path, 'static', 'audio', file_name)
+        audio_file.save(audio_path)
+        audio = Audio(
+            audio_type='proposed-plan',
+            file=audio_path,
+            medical_record_number=medical_record_number
+        )
+        audio.add_audio()
+        audio_success = True
+
+    if audio_success:
+        return redirect(
+            url_for(
+                'doctor_patient',
+                medical_record_number=medical_record_number))
+    else:
+        flash('Please submit an audio file!', 'danger')
+
+    return render_template(
+        './doctor/record-proposed-plan.html', patient=patient, date=date, time=time,
+        mr_num=mr_num, nurse_name=nurse_name)
+
+
+@application.route('/doctor/patient/<string:medical_record_number>/cond-booking/record',
+                   methods=['POST', 'GET'])
+@login_required
+def record_cond_booking_record(medical_record_number):
+    patient = Patient.get_patient(medical_record_number)
+    date, time = patient['created_at'].strftime(
+        "%d %B %Y"), patient['created_at'].strftime("%H:%M")
+    mr_num = patient['medical_record_number']
+    nurse_name = patient['recorded_by'].split()[0].capitalize()
+
+    audio_success = False
+    if 'audio_data' in request.files:
+        audio_file = request.files['audio_data']
+        file_name = f'{medical_record_number}.mp3'
+        audio_path = os.path.join(
+            application.root_path, 'static', 'audio', file_name)
+        audio_file.save(audio_path)
+        audio = Audio(
+            audio_type='condition-at-booking',
+            file=audio_path,
+            medical_record_number=medical_record_number
+        )
+        audio.add_audio()
+        audio_success = True
+
+    if audio_success:
+        return redirect(
+            url_for(
+                'doctor_patient',
+                medical_record_number=medical_record_number))
+    else:
+        flash('Please submit an audio file!', 'danger')
+
+    return render_template(
+        './doctor/cond-at-booking.html', patient=patient, date=date, time=time,
+        mr_num=mr_num, nurse_name=nurse_name)
