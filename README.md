@@ -34,3 +34,12 @@ To test the app on your mobile device (iOS or Android), type in the following UR
 http://a.b.c.d:5000/
 ```
 This will direct you to awaaz-e-sehat's homepage (`index.html`). 
+
+In order to run the app on SSL-protected protocol (`https`), type in the following command to run the app:
+```bash
+flask run --cert=adhoc
+```
+and similarly for mobile:
+```bash
+flask run --cert=adhoc --host a.b.c.d
+```
