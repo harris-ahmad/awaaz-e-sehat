@@ -602,9 +602,10 @@ def doctor_register():
 def doctor_login():
     form = LoginForm()
     if form.validate_on_submit():
-        employee_code = 'doctor_' + form.employee_code.data
+        employee_code = 'doctor' + form.employee_code.data
         password = form.password.data
         doctor = Doctor.get_doctor(employee_code)
+        login_successful=False
         if doctor and bcrypt.checkpw(password.encode('utf-8'), doctor['password']):
             login_user(Doctor(
                 employee_code=doctor['employee_code'],
@@ -612,9 +613,10 @@ def doctor_login():
                 password=doctor['password'],
                 created_at=doctor['created_at']
             ))
-            session['employee_code'] = doctor['employee_code']
-            flash('Login successful!', 'success')
-            return redirect(url_for('doctor_dashboard'))
+            login_successful=True
+            session['employee_code'] = employee_code
+            flash('Logged in successfully!', 'success')
+            return render_template('./doctor/login.html', form=form, login_successful=login_successful)
         else:
             flash('Invalid credentials!', 'danger')
             return redirect(url_for('doctor_login'))
