@@ -21,6 +21,17 @@
             margin: auto;
         }
 
+        .modal-content {
+            background-color: #f8f9fa; /* Light background */
+            color: #333; /* Dark text */
+        }
+        .modal-header {
+            border-bottom: 1px solid #dee2e6; /* Light gray border */
+        }
+        .modal-footer {
+            border-top: 1px solid #dee2e6; /* Light gray border */
+        }
+
         /* Media Queries for responsiveness */
         @media screen and (max-width: 600px) {
             .container {
@@ -33,15 +44,37 @@
 <body>
     <div class="container">
 
-        <div id="flashed-messages">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-info">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+        {% with messages = get_flashed_messages(category_filter=["success"]) %}
+            {% if messages or login_successful %}
+                <script>
+                    window.onload = function() {
+                        $('#loginSuccessModal').modal('show');
+                    }
+                </script>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Login Success Modal -->
+        <div class="modal fade" id="loginSuccessModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">Welcome!</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        You have successfully logged in.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- <button type="button" onclick="$('#loginSuccessModal').modal('show')">Test Modal</button> -->
 
         <form class="form-signin" method="POST" action="{{ url_for('nurse_login') }}">
             <h1 class="h3 mb-3 font-weight-normal text-center">Please sign in</h1>
@@ -59,21 +92,29 @@
             </div>
             <p class="text-center">Don't have an account? <a href="/nurse/register">Sign up</a></p>
         </form>
+        
     </div>
 </body>
-
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.5/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
 
-    // Remove the flashed messages after 5 seconds
-    window.onload = function() {
-        setTimeout(function() {
-            var messages = document.getElementById('flashed-messages');
-            while (messages.firstChild) {
-                messages.removeChild(messages.firstChild);
-            }
-        }, 3000); // 3000 milliseconds = 3 seconds
-    };
+$(document).ready(function() {
+    {% if login_successful %}
+        $('#loginSuccessModal').modal('show');
+    {% endif %}
 
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+        {% if messages %}
+            $('#loginSuccessModal').modal('show');
+        {% endif %}
+    {% endwith %}
+
+    $('#loginSuccessModal').on('hidden.bs.modal', function () {
+        window.location.href = "{{ url_for('nurse_dashboard') }}";
+    });
+});
 </script>
 
 </html>
