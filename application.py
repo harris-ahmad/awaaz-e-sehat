@@ -371,6 +371,7 @@ def nurse_login():
         employee_code = 'nurse_' + form.employee_code.data
         password = form.password.data
         nurse = Nurse.get_nurse(employee_code)
+        login_successful=False
         if nurse and bcrypt.checkpw(password.encode('utf-8'), nurse['password']):
             login_user(Nurse(
                 employee_code=nurse['employee_code'],
@@ -378,9 +379,10 @@ def nurse_login():
                 password=nurse['password'],
                 created_at=nurse['created_at']
             ))
+            login_successful=True
             session['employee_code'] = employee_code
             flash('Logged in successfully!', 'success')
-            return redirect(url_for('nurse_dashboard'))
+            return render_template('./nurse/login.html', form=form, login_successful=login_successful)
         else:
             flash('Invalid credentials!', 'danger')
             return redirect(url_for('nurse_login'))
@@ -611,7 +613,7 @@ def doctor_login():
                 created_at=doctor['created_at']
             ))
             session['employee_code'] = doctor['employee_code']
-            flash('Logged in successfully!', 'success')
+            flash('Login successful!', 'success')
             return redirect(url_for('doctor_dashboard'))
         else:
             flash('Invalid credentials!', 'danger')
