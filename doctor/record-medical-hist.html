@@ -8,140 +8,247 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>Patient Details - {{ mr_num }}</title>
     <style>
-        .instructions-container {
-            background-color: #eef2f7;
-            /* Light blue background for visibility */
-            border-left: 4px solid #007bff;
-            /* Blue border on the left for importance */
-            padding: 10px 20px;
-            /* Padding for space inside the container */
-            margin-bottom: 20px;
-            /* Margin to separate it from the rest of the content */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:display=swap');
+
+        html,
+        body {
+            height: 100%;
+            font-size: 11px;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Enhanced styling for the navbar */
+        .navbar {
+            background-color: #044d29;
+            /* A pleasant blue shade */
+            color: white;
+        }
+
+        .navbar a.navbar-brand {
+            color: white;
+        }
+
+        .navbar a.navbar-brand:hover {
+            color: #ddd;
+            /* Light grey for hover effect */
+        }
+
+        /* style the patient information heading */
+        #patientInformationHeading {
+            /* make the text green */
+            color: #044d29;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .info-box {
+            background-color: #ffffff;
             border-radius: 4px;
-            /* Rounded corners */
+            font-size: 0.9rem;
+            margin-top: 20px;
+            border: 1px solid rgba(0, 0, 0, .125);
+            margin-bottom: 20px;
         }
 
-        .instructions-container p {
-            margin-bottom: 10px;
-            /* Space between paragraphs */
-        }
-
-        .instructions-container strong {
-            color: #0056b3;
-            /* Darker blue for emphasis */
-        }
-
-        #toggleAllBtn {
-            transition: all 0.3s ease;
-            /* Smooth transition for hover effects */
-            border: none;
-            /* Removes the default border */
-        }
-
-        #toggleAllBtn:hover,
-        #toggleAllBtn:focus {
-            background-color: #17a2b8;
-            /* A slightly darker shade for the hover state */
-            box-shadow: 0 4px 8px 0 rgba(0, 123, 255, 0.5);
-            /* Enhanced shadow for a "raised" effect on hover */
-            transform: translateY(-2px);
-            /* Slight raise effect on hover */
-        }
-
-        #toggleAllBtn:active {
-            transform: translateY(-1px);
-            /* Slight push effect when clicked */
-            box-shadow: 0 2px 4px 0 rgba(0, 123, 255, 0.5);
-            /* Smaller shadow for clicked state */
-        }
-
-        .patient-details-container {
+        .info-box-header {
             background-color: #f8f9fa;
-            border-radius: 5px;
-            padding: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, .125);
+            padding: 10px 15px;
+            font-size: 1rem;
+            /* color: #495057; */
+            color: #044d29;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        .info-box-content {
+            padding: 15px;
+        }
+
+        .info-box-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        .info-box-content input {
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            padding: 0.375rem 0.75rem;
+            width: 100%;
+        }
+
+        .info-box-content label {
+            font-weight: 600;
+        }
+
+        /* vitals */
+        .vitals-header {
+            background-color: #f8f9fa;
+            border: 1px solid rgba(0, 0, 0, .125);
+            /* margin-top: 20px; */
+            padding: 10px;
+            font-size: 1rem;
+            color: #495057;
+            cursor: pointer;
+        }
+
+        .vitals-body {
+            padding: 15px;
+            background-color: white;
+            border: 1px solid #00000020;
+            border-top: none;
+        }
+
+        .vitals-table {
+            width: 100%;
+        }
+
+        .vitals-table th,
+        .vitals-table td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        .medicalHist-table {
+            width: 100%;
+        }
+
+        .medicalHist-table th,
+        .medicalHist-table td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        .medicalHist-table th {
+            font-weight: normal;
+        }
+
+        .fa-chevron-up,
+        .fa-chevron-down {
+            float: right;
+        }
+
+        /* continue button */
+        .continue-button {
+            background-color: #403636;
+            /* Bootstrap's secondary color */
+            border: none;
+            border-radius: 10px;
+            /* Rounded edges */
+            color: white;
+            padding: 15px 24px;
+            font-size: 1rem;
+            line-height: 1.5;
+            transition: background-color 0.2s;
+            /* Smooth transition for hover effect */
+            width: 90%;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            /* push the text to the center */
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .continue-button:hover {
+            background-color: #5a6268;
+            /* A darker shade for hover state */
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Centering the button for demonstration */
+        .button-container {
+            display: flex;
+            justify-content: center;
             margin-top: 20px;
         }
 
-        .detail-header {
-            background-color: #e9ecef;
-            border-radius: 5px 5px 0 0;
-            padding: 10px 20px;
-            margin: -20px -20px 20px;
-            border-bottom: 1px solid #dee2e6;
+        .form-check-label {
+            margin-right: 20px;
+            /* Spacing between radio buttons and labels */
         }
 
-        .detail-item {
-            margin-bottom: 10px;
+        .form-check-input {
+            margin-right: 5px;
+            /* Spacing before the label text */
         }
 
-        .detail-item strong {
-            width: 150px;
-            display: inline-block;
+        .hidden {
+            display: none;
         }
 
-        /* Additional styling for Patient Vitals and Medical History toggles */
-        .toggle-header {
-            cursor: pointer;
-            padding: 12px 20px;
-            background-color: #e9ecef;
-            border-radius: 4px;
-            margin-top: 10px;
-            transition: background-color 0.3s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #dee2e6;
+        .form-section {
+            margin-bottom: 15px;
         }
 
-        .toggle-header:hover {
-            background-color: #dde5ea;
-        }
-
-        .toggle-title {
-            font-weight: bold;
-            color: #495057;
-            user-select: none;
-        }
-
-        .toggle-icon {
-            transition: transform 0.3s ease;
-        }
-
-        .toggle-header.collapsed .toggle-icon {
-            transform: rotate(0deg);
-        }
-
-        .toggle-header .toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        .expanded-area {
+        .audio-recorder-container {
+            background-color: #f7f7f7;
+            border: 1px solid #d1d1d1;
+            border-radius: 8px;
             padding: 15px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .audio-recorder-buttons {
+            display: flex;
+            justify-content: center;
+            /* Center the buttons */
+            gap: 10px;
+            /* Space between buttons */
+            margin-bottom: 15px;
+        }
+
+        .audio-recorder-button {
+            background-color: transparent;
+            /* Transparent background */
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+            /* Smooth transform transition */
+            outline: none;
+            /* Remove focus outline */
+        }
+
+        .audio-recorder-button:hover {
+            transform: scale(1.1);
+            /* Slightly enlarge on hover */
+        }
+
+        .audio-recorder-button:active {
+            transform: scale(0.9);
+            /* Slightly shrink when active */
+        }
+
+        .audio-recorder-button i {
+            font-size: 24px;
+            /* Larger icon size */
+            color: #555;
+            /* Icon color */
+        }
+
+        #audioPlayback {
+            width: 100%;
+            border-radius: 5px;
             margin-top: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
         }
 
-        .detail-item {
-            padding: 5px 0;
-            border-bottom: 1px solid #eaecef;
+        #timer {
+            text-align: center;
+            color: #555;
+            margin-top: 10px;
+            font-size: 16px;
         }
 
-        .detail-item:last-child {
-            border-bottom: none;
-        }
+        @media (max-width: 576px) {
 
-        .detail-item strong {
-            display: block;
-            color: #495057;
-            margin-bottom: 5px;
-        }
-
-        .detail-item span {
-            display: block;
-            color: #6c757d;
+            .form-check-label,
+            .form-check-input {
+                margin-right: 10px;
+                /* Adjust spacing for smaller screens */
+            }
         }
 
         /* Adjustments for better responsiveness */
@@ -163,436 +270,450 @@
 </head>
 
 <body>
-    <div class="container mt-5">
-        <div class="patient-details-container">
-            <div class="detail-header">
-                <h2><b>Patient Profile</b></h2>
-                <p><em>Date of creation: {{ date }} at {{ time }}</em></p>
-                <p><em>Recorded by: {{ nurse_name }}</em></p>
-            </div>
 
-            <button id="toggleAllBtn" class="btn btn-info mb-3" onclick="toggleAllSections()">Toggle All
-                Sections</button>
-
-            <!-- Add a radio button based for  -->
-            <div class="container">
-                <span><strong>Allergies</strong></span>
-                <form id="allergyForm">
-                    <div class="form-group">
-                        <label>Does the patient have any allergies?</label>
-                        <div>
-                            <input type="radio" id="allergyYes" name="allergies" value="yes" onchange="showOptions()">
-                            <label for="allergyYes">Yes</label>
-                            <input type="radio" id="allergyNo" name="allergies" value="no" onchange="showOptions()"
-                                checked>
-                            <label for="allergyNo">No</label>
-                        </div>
-                    </div>
-                    <div class="form-group" id="allergyOptions" style="display: none;">
-                        <label>Select the patient's allergies:</label>
-                        <div>
-                            <input type="checkbox" id="drug" name="allergyType" value="drug">
-                            <label for="drug">Drug</label>
-                            <input type="checkbox" id="pollen" name="allergyType" value="pollen">
-                            <label for="pollen">Pollen</label>
-                            <input type="checkbox" id="dust" name="allergyType" value="dust">
-                            <label for="dust">Dust</label>
-                            <input type="checkbox" id="other" name="allergyType" value="other">
-                            <label for="other">Other</label>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="container">
-                <span><strong>Pregnancy</strong></span>
-                <form id="pregnancyForm">
-                    <div class="form-group">
-                        <label>Please select the patient's gravida:</label>
-                        {{form.gravida(class="form-control")}}
-                    </div>
-                    <div class="form-group">
-                        <label>Please select the LMP date information</label>
-                        <div>
-                            <input type="radio" id="sure" name="lmp" value="Sure" onchange="showOptionsLMP()">
-                            <label for="unsure">Sure</label>
-                            <input type="radio" id="unsure" name="lmp" value="unsure" onchange="showOptionsLMP()"
-                                checked>
-                            <label for="unsure">Unsure</label>
-                        </div>
-                    </div>
-                    <div class="form-group" id="lmpOptions" style="display: none;">
-                        {{ form.lmp_date }}
-                    </div>
-                </form>
-
-            </div>
-
-            <div class="toggle-header collapsed" data-toggle="collapse" data-target="#expandableArea-vitals"
-                aria-expanded="false" aria-controls="expandableArea">
-                <span class="toggle-title">Patient Vitals</span>
-                <i class="fas fa-chevron-down toggle-icon"></i> <!-- Font Awesome icon -->
-            </div>
-            <div class="collapse w-100" id="expandableArea-vitals">
-                <div class="expanded-area">
-                    <div class="detail-item">
-                        <strong>Medical Number:</strong> <span>{{ patient.medical_record_number }}</span>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Name:</strong> <span>{{ patient.patient_name }}</span>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Age:</strong> <span>{{ patient.patient_age }}</span>
-                    </div>
-
-                    <!-- Add more patient details in the same pattern -->
-                    <div class="detail-item">
-                        <strong>Condition:</strong> <span>{{ patient.patient_type }}</span>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Last Visit:</strong> <span>{{ patient.visit_number }}</span>
-                    </div>
-                    <!-- Continue adding more details as needed -->
-                    <div class="detail-item">
-                        <strong>Weight (kg):</strong> <span>{{ patient.weight_kg }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Height (cm):</strong> <span>{{ patient.height_cm }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Blood Pressure (Systole):</strong> <span>{{ patient.b_bp_sys }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Blood Pressure (Diastole):</strong> <span>{{ patient.b_bp_dia }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Temperature (F):</strong> <span>{{ patient.temperature }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Pluse:</strong> <span>{{ patient.pulse }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>BSR:</strong> <span>{{ patient.bsr }}</span>
-                    </div>
-
-                    <div class="detail-idisplay ALL information tem">
-                        <strong>Urine Albumin:</strong> <span>{{ patient.urine_albumin }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>HB:</strong> <span>{{ patient.hb }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>SPO2:</strong> <span>{{ patient.spO2 }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="toggle-header collapsed" data-toggle="collapse" data-target="#expandableArea-medicalhist"
-                aria-expanded="false" aria-controls="expandableArea">
-                <span class="toggle-title">Medical History</span>
-                <i class="fas fa-chevron-down toggle-icon"></i> <!-- Font Awesome icon -->
-            </div>
-            <div class="collapse w-100" id="expandableArea-medicalhist">
-                <div class="expanded-area">
-                    <div id="personalDetailsSection" class="mb-3" style="padding-left: 20px;">
-                        <div class="toggle-header collapsed d-flex justify-content-between" data-toggle="collapse"
-                            data-target="#personalDetails" aria-expanded="false" aria-controls="personalDetails">
-                            <span><strong>Personal Details</strong></span>
-                            <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
-                        </div>
-                        <div id="personalDetails" class="expanded-area collapse show">
-                            <p>
-                                Blood Group Self<br />
-                                Education Self<br />
-                                Occupation Self<br />
-                                Married Since<br />
-                                Gravide<br />
-                                Para<br />
-                                Miscarriage<br />
-                                Abortion<br />
-                                NMC (Regular/ Irregular)<br />
-                                Consanguinous Marriage<br />
-                                Vaginal Bleeding Since Last Period<br />
-                                Oral Contraceptives, Other Contraceptives<br />
-                                Drug Abuse<br />
-                                Smoking<br />
-                                Present Medications<br />
-                            </p>
-                        </div>
-
-                        <div class="toggle-header collapsed d-flex justify-content-between" data-toggle="collapse" data-target="#husbandDetails"
-                            aria-expanded="false" aria-controls="husbandDetails">
-                            <span><strong>Husband Details</strong></span>
-                            <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
-                        </div>
-                        <div id="husbandDetails" class="expanded-area collapse show">
-                            <p>
-                                Name<br />
-                                Age<br />
-                                Education<br />
-                                Blood Group<br />
-                                Occupation<br />
-                            </p>
-                        </div>
-
-                        <div class="toggle-header collapsed d-flex justify-content-between" data-toggle="collapse" data-target="#medicalHistory"
-                            aria-expanded="flase" aria-controls="medicalHistory">
-                            <span><strong>Medical History</strong></span>
-                            <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
-                        </div>
-                        <div id="medicalHistory" class="expanded-area collapse show">
-                            <p>
-                                Diabetes<br />
-                                Hypertension<br />
-                                Recurrent UTI<br />
-                                Anemia<br />
-                                Cardiac Problem<br />
-                                Hepatitis<br />
-                                Heamoglobinopathy<br />
-                                Endocrine dysfunction (Thyroid/PCOS)<br />
-                            </p>
-                        </div>
-                        <div class="toggle-header collapsed d-flex justify-content-between" data-toggle="collapse"
-                            data-target="#surgicalHistory" aria-expanded="false" aria-controls="surgicalHistory">
-                            <span><strong>Surgical History</strong></span>
-                            <i class="fas fa-chevron-down"></i> <!-- Font Awesome icon -->
-                        </div>
-                        <div id="surgicalHistory" class="expanded-area collapse show">
-                            <p>
-                                Blood Transfusion<br />
-                                Anesthetic Problem<br />
-                                Infertility<br />
-                                Operation Allergies<br />
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container" style="padding-top: 20px;">
-                <div class="instructions-container">
-                    <p><strong>Instructions:</strong></p>
-                    <p>You will be recording the patient's medical history now.</p>
-                    <p><em>If the patient has no medical or surgical history, please mention that in the recording.</em>
-                    </p>
-                    <p><strong>Before recording, please expand the toggles above and review the variables that you need
-                            to record.</strong></p>
-                </div>
-                <button id="startRecordingBtn" class="btn btn-primary" style="margin-right:30px;"><i
-                        class="fas fa-microphone" style="margin-right: 5px;"></i>Start</button>
-                <button id="stopRecordingBtn" class="btn btn-secondary" style="margin-right: 30px;" disabled><i
-                        class="fas fa-stop-circle" style="margin-right: 5px;"></i>Stop</button>
-                <button id="retryRecordingBtn" class="btn btn-warning" disabled><i class="fas fa-redo"
-                        style="margin-right: 5px;"></i>Retry</button>
-                <button id="submitRecordingBtn" class="btn btn-success"
-                    style="margin-right: 10px; width: 100%; margin-top: 10px;"><i class="fas fa-check-circle"
-                        style="margin-right: 5px;"></i>Submit</button>
-                <div id="timer" style="display: none;">00:00:00</div>
-                <audio id="audioPlayback" controls style="display: none;"></audio>
-            </div>
-
-            <!-- <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-primary mt-3 no-print" style="width: 100%;">Start Recording</a> -->
-            <form id="audioForm" action="{{ url_for('record_medical_history', medical_record_number=mr_num) }}" method="POST"
-                style="display: none;">
-                <input type="file" id="audioInput" name="audio_data" accept=".mp3">
-                <input type="submit" value="Send">
-            </form>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="{{ url_for('doctor_dashboard') }}" style="font-size:11px">M.R NO: {{ mr_num }}</a>
+        <div class="ml-auto">
+            <a href="{{ url_for('doctor_logout') }}" class="btn btn-outline-light my-2 my-sm-0">Logout</a>
         </div>
+    </nav>
 
-        <!-- <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-primary mt-3 no-print">Back to Dashboard</a> -->
+    <div class="container">
+        <div class="info-box">
+            <div class="info-box-header">
+                PATIENT INFORMATION
+            </div>
+            <div class="info-box-content">
+                <p>Age: {{ patient.age }}</p>
+                <!-- <input type="text" id="years" name="years" placeholder="Enter years..."> -->
+                <p>Visit Date: {{ vitals_recorded_at }}</p>
+                <p>Visit Number: {{ visit_number }}</p>
+            </div>
+        </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- vitals -->
+    <div class="container mb-3">
+        <!-- Vitals Section -->
+        <div class="card">
+            <div class="vitals-header" data-toggle="collapse" href="#vitalsContent" aria-expanded="false"
+                aria-controls="vitalsContent" area-label="Toggle Vitals Section">
+                VITALS
+                <i class="fas fa-chevron-up"></i>
+            </div>
+            <div class="collapse show" id="vitalsContent">
+                <div class="vitals-body">
+                    <table class="vitals-table">
+                        <tr>
+                            <th>Vitals Recorded:</th>
+                            <td colspan="2">{{ date }} at {{ time }}</td>
+                        </tr>
+                        <tr>
+                            <th>Weight (Kg)</th>
+                            <th>Height (Cm)</th>
+                            <th>BMI</th>
+                        </tr>
+                        <tr>
+                            <td>{{ patient.weight_kg }}</td>
+                            <td>{{ patient.height_cm }}</td>
+                            <td>{{ patient.bmi }}</td>
+                        </tr>
+                        <tr>
+                            <th>B.P.B Sys / Dia</th>
+                            <th>H/R</th>
+                            <th>SpO2</th>
+                        </tr>
+                        <tr>
+                            <td>{{ patient.b_bp_sys }} / {{ patient.b_bp_dia }}</td>
+                            <td>{{ patient.pulse }}</td>
+                            <td>{{ patient.spO2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Temperature (F)</th>
+                            <th>Pulse (BPM)</th>
+                            <th>BSR</th>
+                        </tr>
+                        <tr>
+                            <td>{{ patient.temperature }}</td>
+                            <td>{{ patient.pulse }}</td>
+                            <td>{{ patient.bsr }}</td>
+                        </tr>
+                        <tr>
+                            <th>Urine Albumin</th>
+                            <th>HB (g/dL)</th>
+                        </tr>
+                        <tr>
+                            <td>{{ patient.urine_albumin }}</td>
+                            <td>{{ patient.hb }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- allergies mcqs -->
+    <div class="container">
+        <span><strong>Allergies</strong></span>
+        <form id="allergyForm">
+            <div class="form-group">
+                <label>Does the patient have any allergies?</label>
+                <div>
+                    <input type="radio" id="allergyYes" name="allergies" value="yes" onchange="showOptions()">
+                    <label for="allergyYes">Yes</label>
+                    <input type="radio" id="allergyNo" name="allergies" value="no" onchange="showOptions()" checked>
+                    <label for="allergyNo">No</label>
+                </div>
+            </div>
+            <div class="form-group" id="allergyOptions" style="display: none;">
+                <label>Select the patient's allergies:</label>
+                <div>
+                    <input type="checkbox" id="drug" name="allergyType" value="drug">
+                    <label for="drug">Drug</label>
+                    <input type="checkbox" id="pollen" name="allergyType" value="pollen">
+                    <label for="pollen">Pollen</label>
+                    <input type="checkbox" id="dust" name="allergyType" value="dust">
+                    <label for="dust">Dust</label>
+                    <input type="checkbox" id="other" name="allergyType" value="other">
+                    <label for="other">Other</label>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="container">
+        <span><strong>Pregnancy</strong></span>
+        <form id="pregnancyForm">
+            <div class="form-group">
+                <label>Please select the patient's gravida:</label>
+                {{form.gravida(class="form-control")}}
+            </div>
+            <div class="form-group">
+                <label>Please select the LMP date information</label>
+                <div>
+                    <input type="radio" id="sure" name="lmp" value="Sure" onchange="showOptionsLMP()">
+                    <label for="unsure">Sure</label>
+                    <input type="radio" id="unsure" name="lmp" value="unsure" onchange="showOptionsLMP()" checked>
+                    <label for="unsure">Unsure</label>
+                </div>
+            </div>
+            <div class="form-group" id="lmpOptions" style="display: none;">
+                {{ form.lmp_date(class="form-control") }}
+            </div>
+        </form>
+    </div>
+
+    <!-- medical history -->
+    <!-- medical history -->
+    <div class="container">
+        <div class="info-box">
+            <div class="info-box-header">
+                MEDICAL HISTORY
+            </div>
+            <div class="info-box-content">
+                <p><strong>Personal Details</strong></p>
+                <p>Blood Group Self</p>
+                <p>Education Self</p>
+                <p>Occupation Self</p>
+                <p>Married Since</p>
+                <p>Gravide</p>
+                <p>Para</p>
+                <p>Miscarriage</p>
+                <p>Abortion</p>
+                <p>NMC (Regular / Irregular)</p>
+                <p>Consanguinous Marriage</p>
+                <p>Vaginal Bleeding Since Last Period</p>
+                <p>Oral Contraceptives, Other Contraceptives</p>
+                <p>Drug Abuse</p>
+                <p>Smoking</p>
+                <p>Present Medications</p>
+
+                <!-- Add other personal details here -->
+                <p><strong>Husband Details</strong></p>
+                <!-- Add husband details here -->
+                <p>Name</p>
+                <p>Age</p>
+                <p>Education</p>
+                <p>Blood Group</p>
+                <p>Occupation</p>
+
+                <p><strong>Medical History</strong></p>
+                <table class="medicalHist-table">
+                    <tr>
+                        <th>Diabetes</th>
+                        <th>Hypertension</th>
+                    </tr>
+                    <tr>
+                        <th>Recurrent UTI</th>
+                        <th>Anemia</th>
+                    </tr>
+                    <tr>
+                        <th>Cardiac Problem</th>
+                        <th>Hepatitis</th>
+                    </tr>
+                    <tr>
+                        <th>Heamoglobinopathy</th>
+                        <th>Endocrine dysfunction (Thyroid/PCOS)</th>
+                    </tr>
+                </table>
+
+                <!-- Add other medical history items here -->
+                <p><strong>Surgical History</strong></p>
+                <table class="medicalHist-table">
+                    <tr>
+                        <th>Blood Transfusion</th>
+                        <th>Anesthetic Problem</th>
+                    </tr>
+                    <tr>
+                        <th>Infertility</th>
+                        <th>Operation Allergies</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- audio recorder -->
+    <div class="audio-recorder-container">
+        <div class="audio-recorder-buttons">
+            <button id="recordButton" class="audio-recorder-button" onclick="toggleRecording()">
+                <i class="fas fa-microphone"></i> <!-- Record icon -->
+            </button>
+            <button id="stopButton" class="audio-recorder-button" onclick="stopRecording()" disabled>
+                <i class="fas fa-stop"></i> <!-- Stop icon -->
+            </button>
+            <button id="retryButton" class="audio-recorder-button" onclick="retryRecording()" disabled>
+                <i class="fas fa-redo"></i> <!-- Retry icon -->
+            </button>
+            <button id="submitButton" class="audio-recorder-button" onclick="submitRecording()" disabled>
+                <i class="fas fa-check-circle"></i> <!-- Submit icon -->
+            </button>
+        </div>
+        <div id="timer" style="display: none;">00:00:00</div>
+        <audio id="audioPlayback" controls style="display: none;"></audio>
+    </div>
+
+    <!-- ajax -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
     <script>
 
-        document.querySelectorAll('.toggle-header').forEach(function (header) {
-            header.addEventListener('click', function () {
-                this.classList.toggle('collapsed');
-            });
-        });
-
-        function toggleAllSections() {
-            // This will toggle the 'show' class on both sections
-            let allCollapsibles = document.querySelectorAll('.collapse');
-
-            allCollapsibles.forEach(function (collapsible) {
-                $(collapsible).collapse('toggle'); // Use Bootstrap's jQuery collapse method
-            });
-
-            // This will change the chevron icon on all toggle buttons
-            let allChevronToggles = document.querySelectorAll('[data-toggle="collapse"]');
-
-            // change the text of the toggle button to "Close All Sections" once it's been toggled
-            let toggleAllBtn = document.getElementById("toggleAllBtn");
-
-            allChevronToggles.forEach(function (toggle) {
-                let chevron = toggle.querySelector('.fas');
-                if (chevron.classList.contains('fa-chevron-down')) {
-                    chevron.classList.remove('fa-chevron-down');
-                    chevron.classList.add('fa-chevron-up');
-                    toggleAllBtn.textContent = 'Close All Sections';
-                } else if (chevron.classList.contains('fa-chevron-up')) {
-                    chevron.classList.remove('fa-chevron-up');
-                    chevron.classList.add('fa-chevron-down');
-                    toggleAllBtn.textContent = 'Toggle All Sections';
-                }
-            });
-        }
-
+        // Audio recording implementation
         let mediaRecorder;
-        let audioChunks = [];
-        let recordingInterval;
-        const formData = new FormData();
+        let chunks = [];
+        let timerInterval;
 
-        function showOptions() {
-            var allergyYes = document.getElementById('allergyYes');
-            var allergyOptions = document.getElementById('allergyOptions');
-            allergyOptions.style.display = allergyYes.checked ? 'block' : 'none';
+        function toggleRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                stopRecording();
+            } else {
+                startRecording();
+            }
         }
 
-        function showOptionsLMP() {
-            var lmpSure = document.getElementById('sure');
-            var options = document.getElementById('lmpOptions');
-            options.style.display = lmpSure.checked ? 'block' : 'none';
-        }
-
-        function startTimer() {
-            let startTime = Date.now();
-            recordingInterval = setInterval(() => {
-                let elapsedTime = Date.now() - startTime;
-                let hours = Math.floor(elapsedTime / 3600000).toString().padStart(2, '0');
-                let minutes = Math.floor((elapsedTime % 3600000) / 60000).toString().padStart(2, '0');
-                let seconds = Math.floor((elapsedTime % 60000) / 1000).toString().padStart(2, '0');
-                document.getElementById('timer').textContent = `${hours}:${minutes}:${seconds}`;
-            }, 1000);
-        }
-
-        function stopTimer() {
-            clearInterval(recordingInterval);
-            document.getElementById('timer').textContent = "00:00:00";
-        }
-
-        document.getElementById('startRecordingBtn').addEventListener('click', function () {
+        function startRecording() {
             navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
+                .then(function (stream) {
                     mediaRecorder = new MediaRecorder(stream);
                     mediaRecorder.start();
+                    chunks = [];
 
-                    mediaRecorder.addEventListener("dataavailable", event => {
-                        audioChunks.push(event.data);
-                    });
-
-                    mediaRecorder.addEventListener("stop", () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg-3' });
-                        const audioUrl = URL.createObjectURL(audioBlob);
-                        const audio = new File(audioChunks, 'audio.mp3', { type: 'audio/mpeg-3', lastModified: Date.now() });
-                        document.getElementById('audioPlayback').src = audioUrl;
-                        document.getElementById('audioPlayback').style.display = 'block';
-
-                        // Prepare the form for sending 
-                        formData.append('audio_data', audio);
-                    });
-                    document.getElementById('retryRecordingBtn').disabled = false;
+                    // Update UI
+                    document.getElementById('recordButton').disabled = true;
+                    document.getElementById('stopButton').disabled = false;
+                    document.getElementById('retryButton').disabled = true;
+                    document.getElementById('submitButton').disabled = true;
                     document.getElementById('timer').style.display = 'block';
-                    startTimer();
-                    document.getElementById('startRecordingBtn').disabled = true;
-                    document.getElementById('stopRecordingBtn').disabled = false;
+
+                    // Start timer
+                    let startTime = Date.now();
+                    timerInterval = setInterval(function () {
+                        let elapsedTime = Date.now() - startTime;
+                        let formattedTime = formatTime(elapsedTime);
+                        document.getElementById('timer').textContent = formattedTime;
+                    }, 1000);
+
+                    // Event listeners for media recorder
+                    mediaRecorder.addEventListener('dataavailable', function (event) {
+                        chunks.push(event.data);
+                    });
+
+                    mediaRecorder.addEventListener('stop', function () {
+                        // Stop timer
+                        clearInterval(timerInterval);
+
+                        // Create audio playback
+                        let blob = new Blob(chunks, { type: 'audio/webm' });
+                        let audioUrl = URL.createObjectURL(blob);
+                        let audioElement = document.getElementById('audioPlayback');
+                        audioElement.src = audioUrl;
+                        audioElement.style.display = 'block';
+
+                        // Update UI
+                        document.getElementById('recordButton').disabled = false;
+                        document.getElementById('stopButton').disabled = true;
+                        document.getElementById('retryButton').disabled = false;
+                        document.getElementById('submitButton').disabled = false;
+                        document.getElementById('timer').style.display = 'none';
+                    });
+                })
+                .catch(function (error) {
+                    console.error('Error accessing microphone:', error);
                 });
-        });
-
-        document.getElementById('stopRecordingBtn').addEventListener('click', function () {
-            mediaRecorder.stop();
-            stopTimer();
-            document.getElementById('stopRecordingBtn').disabled = true;
-            document.getElementById('submitRecordingBtn').disabled = false;
-            document.getElementById('retryRecordingBtn').disabled = false;
-            document.getElementById('startRecordingBtn').disabled = false;
-            document.getElementById('timer').style.display = 'none';
-        });
-
-        document.getElementById('submitRecordingBtn').addEventListener('click', function () {
-            // AJAX request to submit the audio file to the Flask endpoint
-            console.log('Sending audio file...');
-            $.ajax({
-                url: "/doctor/patient/{{ mr_num }}/family-history/record",
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    console.log('Success:', response);
-                },
-                error: function (error) {
-                    console.log('Error:', error);
-                }
-            });
-            document.getElementById('submitRecordingBtn').disabled = true; // Disable submit button after sending
-            document.getElementById('retryRecordingBtn').disabled = true;
-            document.getElementById('startRecordingBtn').disabled = true;
-            document.getElementById('stopRecordingBtn').disabled = true;
-            document.getElementById('timer').style.display = 'none';
-
-            if (document.getElementById('audioPlayback').src === "") {
-                let warningMsg = document.createElement('div');
-                warningMsg.classList.add('alert', 'alert-warning', 'mt-3');
-                warningMsg.textContent = 'Please submit the audio file first!';
-                document.querySelector('.patient-details-container').appendChild(warningMsg);
-                // Hide the warning message after 5 seconds
-                setTimeout(() => {
-                    warningMsg.style.display = 'none';
-                }, 5000);
-
-                // enable all the necessary buttons
-                document.getElementById('submitRecordingBtn').disabled = false;
-                document.getElementById('retryRecordingBtn').disabled = false;
-                document.getElementById('startRecordingBtn').disabled = false;
-                document.getElementById('stopRecordingBtn').disabled = true;
-                document.getElementById('timer').style.display = 'none';
-                return;
-            } else {
-                let successMsg = document.createElement('div');
-                successMsg.classList.add('alert', 'alert-success', 'mt-3');
-                successMsg.textContent = 'Audio file submitted successfully!';
-                document.querySelector('.patient-details-container').appendChild(successMsg);
-                // Hide the success message after 5 seconds
-                setTimeout(() => {
-                    successMsg.style.display = 'none';
-                }, 5000);
-
-                window.location.href = "/doctor/patient/{{ mr_num }}/family-history/record";
-            }
-        });
-
-
-        function resetRecording() {
-            if (mediaRecorder && mediaRecorder.state !== "inactive") {
-                mediaRecorder.stop();
-            }
-            audioChunks = [];
-            document.getElementById('audioPlayback').style.display = 'none';
-            document.getElementById('startRecordingBtn').disabled = false;
-            document.getElementById('stopRecordingBtn').disabled = true;
-            document.getElementById('retryRecordingBtn').disabled = true;
-            stopTimer();
-            document.getElementById('timer').style.display = 'none';
         }
 
-        document.getElementById('retryRecordingBtn').addEventListener('click', resetRecording);
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+        }
+
+        function retryRecording() {
+            // Reset UI
+            document.getElementById('audioPlayback').style.display = 'none';
+            document.getElementById('retryButton').disabled = true;
+            document.getElementById('submitButton').disabled = true;
+
+            // Clear recorded chunks
+            chunks = [];
+        }
+
+        function submitRecording() {
+            let blob = new Blob(chunks, { type: 'audio/webm' });
+            let formData = new FormData();
+            formData.append('audio', blob, 'audio.webm');
+
+            // Send the audio recording to the server
+            fetch('/doctor/patient/{{mr_num}}/medical-history/record', {
+                method: 'POST',
+                body: formData
+            })
+                .then(function (response) {
+                    console.log(response.ok);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();  // or response.json(), depending on what the server sends
+                })
+                .then(function (text) {  // or .then(function (data) if using json
+                    console.log(text);  // log the response
+                    alert('Audio recording uploaded successfully');
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    alert('Failed to upload audio');
+                });
+
+            // Reset UI
+            document.getElementById('audioPlayback').style.display = 'none';
+            document.getElementById('retryButton').disabled = true;
+            document.getElementById('submitButton').disabled = true;
+
+            // Clear recorded chunks
+            chunks = [];
+            stopRecording();
+            document.getElementById('timer').textContent = '00:00:00';
+            document.getElementById('timer').style.display = 'none';
+            mediaRecorder = null;
+            let audioElement = document.getElementById('audioPlayback');
+            audioElement.src = '';
+            clearInterval(timerInterval);
+            document.getElementById('recordButton').disabled = false;
+            document.getElementById('stopButton').disabled = true;
+        }
+
+        function formatTime(milliseconds) {
+            let totalSeconds = Math.floor(milliseconds / 1000);
+            let hours = Math.floor(totalSeconds / 3600);
+            let minutes = Math.floor((totalSeconds % 3600) / 60);
+            let seconds = totalSeconds % 60;
+
+            let formattedTime = '';
+            if (hours > 0) {
+                formattedTime += hours.toString().padStart(2, '0') + ':';
+            }
+            formattedTime += minutes.toString().padStart(2, '0') + ':';
+            formattedTime += seconds.toString().padStart(2, '0');
+
+            return formattedTime;
+        }
+
+        // Allergy form logic
+        function showOptions() {
+            let allergyYes = document.getElementById('allergyYes');
+            let allergyOptions = document.getElementById('allergyOptions');
+            if (allergyYes.checked) {
+                allergyOptions.style.display = 'block';
+            } else {
+                allergyOptions.style.display = 'none';
+            }
+        }
+
+        // Pregnancy form logic
+        function showOptionsLMP() {
+            let lmpSure = document.getElementById('sure');
+            let lmpOptions = document.getElementById('lmpOptions');
+            if (lmpSure.checked) {
+                lmpOptions.style.display = 'block';
+            } else {
+                lmpOptions.style.display = 'none';
+            }
+        }
+
+        // Form submission logic
+        function submitForm() {
+            if (validateForm()) {
+                document.getElementById('allergyForm').submit();
+            }
+            return false;
+        }
+
+        // Form validation logic
+        function validateForm() {
+            let form = document.getElementById('allergyForm');
+            let allergies = form.elements['allergies'].value;
+            let allergyType = form.elements['allergyType'].value;
+            let lmp = form.elements['lmp'].value;
+            let lmpDate = form.elements['lmp_date'].value;
+
+            if (allergies === 'yes' && allergyType === '') {
+                alert('Please select the patient\'s allergies');
+                return false;
+            }
+
+            if (lmp === 'Sure' && lmpDate === '') {
+                alert('Please select the LMP date');
+                return false;
+            }
+
+            return true;
+        }
+
+        // close the vitals section by default
+
+        // by default, the vitals section is collapsed. adjust the chevron icon accordingly
+        let vitalsHeader = document.querySelector('.vitals-header');
+        let vitalsChevron = vitalsHeader.querySelector('i');
+        let vitalsContent = document.querySelector('.vitals-body');
+        if (vitalsContent.classList.contains('show')) {
+            vitalsChevron.classList.add('fa-chevron-up');
+        } else {
+            vitalsChevron.classList.add('fa-chevron-down');
+        }
+
+        // toggle the chevron icon when the vitals section is expanded/collapsed
+        vitalsHeader.addEventListener('click', function () {
+            if (vitalsContent.classList.contains('show')) {
+                vitalsChevron.classList.remove('fa-chevron-down');
+                vitalsChevron.classList.add('fa-chevron-up');
+            } else {
+                vitalsChevron.classList.remove('fa-chevron-up');
+                vitalsChevron.classList.add('fa-chevron-down');
+            }
+        });
 
     </script>
-
-    <!-- Optional Bootstrap JavaScript -->
 </body>
 
 </html>
