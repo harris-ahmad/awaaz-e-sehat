@@ -251,9 +251,13 @@ def record_medical_history(medical_record_number):
         )
         flash('Medical history recorded successfully!', 'success')
         form_success = True
+        session['med_history_form_filled'] = True
+    
+    print(request.files)
 
-    if 'audio_data' in request.files:
-        audio_file = request.files['audio_data']
+    if 'audio' in request.files:
+        print('audio_data found')
+        audio_file = request.files['audio']
         file_name = f'{medical_record_number}_medical_history.wav'
         audio_path = os.path.join(
             application.root_path, 'static', 'audio', file_name)
@@ -515,3 +519,7 @@ def record_present_preg_record(medical_record_number):
     return render_template(
         './doctor/present-preg.html', patient=patient, date=date, time=time,
         mr_num=mr_num, nurse_name=nurse_name)
+
+
+if __name__ == '__main__':
+    application.run(debug=True)
