@@ -599,6 +599,8 @@
                 .then(function (text) {  // or .then(function (data) if using json
                     console.log(text);  // log the response
                     alert('Audio recording uploaded successfully');
+                    // redirect to the next page
+                    window.location.href = '/doctor/patient/{{mr_num}}/family-history/record';
                 })
                 .catch(function (error) {
                     console.error(error);
