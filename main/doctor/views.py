@@ -16,6 +16,8 @@ import os
 from . import doctor
 from .models import Patient, Audio, Doctor
 from ..database import DB
+from ..extensions import cache
+from ..prompting import Prompting
 from .forms import PatientSearchForm
 
 @doctor.route('/dashboard')
@@ -500,43 +502,163 @@ def record_proposed_plan(mr_num: str) -> str:
         form_success=form_success)
 
 
+@cache.cached(timeout=50, key_prefix='transcription')
+def get_cached_transcription(
+        audio_type: str, medical_record_number: str) -> str:
+    audio = Audio(
+        audio_type=audio_type, file=None,
+        medical_record_number=medical_record_number)
+
+    transcription = audio.get_transcription(audio_type)
+
+    return transcription
+
+@cache.cached(timeout=50, key_prefix='clarification_response')
+def get_cached_clarification_response(
+        file_path: str, transcription: str) -> str:
+    prompting_engine = Prompting(
+        file_path=file_path,
+        transcription=transcription)
+
+    clarification_response = prompting_engine.generate_responses()
+
+    return clarification_response
+
 @doctor.route('/patient/<string:mr_num>/transcribe/medical-history',
               methods=['GET', 'POST'])
+@cache.cached(timeout=50, key_prefix='transcription_medical_history')
 def transcribe_medical_history(mr_num: str) -> str:
-    pass
+    patient = Patient.get_patient(mr_num)
+    mr_num = patient['medical_record_number']
 
+    transcription = get_cached_transcription(
+        audio_type='medical_history', medical_record_number=mr_num)
+
+    clarification_response = get_cached_clarification_response(
+        file_path='scripts/Clarifications_Screen/Medical_History.txt',
+        transcription=transcription)
+
+    return render_template(
+        'transcription_medical_history.html',
+        transcription=transcription, mr_num=mr_num,
+        response=clarification_response)
 
 @doctor.route('/patient/<string:mr_num>/transcribe/family-history',
                 methods=['GET', 'POST'])
+@cache.cached(timeout=50, key_prefix='transcription_family_history')
 def transcribe_family_history(mr_num: str) -> str:
-    pass
+    patient = Patient.get_patient(mr_num)
+    mr_num = patient['medical_record_number']
+
+    transcription = get_cached_transcription(
+        audio_type='family_history', medical_record_number=mr_num)
+    
+    clarification_response = get_cached_clarification_response(
+        file_path='scripts/Clarifications_Screen/Family_History.txt',
+        transcription=transcription)
+    
+    return render_template(
+        'transcription_family_history.html',
+        transcription=transcription, mr_num=mr_num,
+        response=clarification_response)
 
 
 @doctor.route('/patient/<string:mr_num>/transcribe/socioeconomic-history',
                 methods=['GET', 'POST'])
+@cache.cached(timeout=50, key_prefix='transcription_socioeconomic_history')
 def transcribe_socioeconomic_history(mr_num: str) -> str:
-    pass
+    patient = Patient.get_patient(mr_num)
+    mr_num = patient['medical_record_number']
+
+    transcription = get_cached_transcription(
+        audio_type='socioeconomic_history', medical_record_number=mr_num)
+    
+    clarification_response = get_cached_clarification_response(
+        file_path='scripts/Clarifications_Screen/Socioeconomic_History.txt',
+        transcription=transcription)
+    
+    return render_template(
+        'transcription_socioeconomic_history.html',
+        transcription=transcription, mr_num=mr_num,
+        response=clarification_response)
 
 
 @doctor.route('/patient/<string:mr_num>/transcribe/previous-pregnancy',
                 methods=['GET', 'POST'])
+@cache.cached(timeout=50, key_prefix='transcription_previous_pregnancy')
 def transcribe_previous_pregnancy(mr_num: str) -> str:
-    pass
+    patient = Patient.get_patient(mr_num)
+    mr_num = patient['medical_record_number']
+
+    transcription = get_cached_transcription(
+        audio_type='previous_pregnancy', medical_record_number=mr_num)
+    
+    clarification_response = get_cached_clarification_response(
+        file_path='scripts/Clarifications_Screen/Previous_Pregnancy.txt',
+        transcription=transcription)
+    
+    return render_template(
+        'transcription_previous_pregnancy.html',
+        transcription=transcription, mr_num=mr_num,
+        response=clarification_response)
+
 
 
 @doctor.route('/patient/<string:mr_num>/transcribe/condition-at-booking',
                 methods=['GET', 'POST'])
+@cache.cached(timeout=50, key_prefix='transcription_condition_at_booking')
 def transcribe_condition_at_booking(mr_num: str) -> str:
-    pass
+    patient = Patient.get_patient(mr_num)
+    mr_num = patient['medical_record_number']
+
+    transcription = get_cached_transcription(
+        audio_type='condition_at_booking', medical_record_number=mr_num)
+    
+    clarification_response = get_cached_clarification_response(
+        file_path='scripts/Clarifications_Screen/Condition_at_Booking.txt',
+        transcription=transcription)
+    
+    return render_template(
+        'transcription_condition_at_booking.html',
+        transcription=transcription, mr_num=mr_num,
+        response=clarification_response)
 
 
 @doctor.route('/patient/<string:mr_num>/transcribe/present-pregnancy',
                 methods=['GET', 'POST'])
+@cache.cached(timeout=50, key_prefix='transcription_present_pregnancy')
 def transcribe_present_pregnancy(mr_num: str) -> str:
-    pass
+    patient = Patient.get_patient(mr_num)
+    mr_num = patient['medical_record_number']
+
+    transcription = get_cached_transcription(
+        audio_type='present_preg', medical_record_number=mr_num)
+    
+    clarification_response = get_cached_clarification_response(
+        file_path='scripts/Clarifications_Screen/Present_Pregnancy.txt',
+        transcription=transcription)
+    
+    return render_template(
+        'transcription_present_pregnancy.html',
+        transcription=transcription, mr_num=mr_num,
+        response=clarification_response)
 
 
 @doctor.route('/patient/<string:mr_num>/transcribe/proposed-plan',
                 methods=['GET', 'POST'])
+@cache.cached(timeout=50, key_prefix='transcription_proposed_plan')
 def transcribe_proposed_plan(mr_num: str) -> str:
-    pass
+    patient = Patient.get_patient(mr_num)
+    mr_num = patient['medical_record_number']
+
+    transcription = get_cached_transcription(
+        audio_type='proposed_plan', medical_record_number=mr_num)
+    
+    clarification_response = get_cached_clarification_response(
+        file_path='scripts/Clarifications_Screen/Proposed_Plan.txt',
+        transcription=transcription)
+    
+    return render_template(
+        'transcription_proposed_plan.html',
+        transcription=transcription, mr_num=mr_num,
+        response=clarification_response)
