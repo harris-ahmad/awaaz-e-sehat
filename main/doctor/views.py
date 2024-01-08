@@ -498,3 +498,45 @@ def record_proposed_plan(mr_num: str) -> str:
         'record_proposed_plan.html', patient=patient, mr_num=mr_num,
         nurse_name=nurse_name, date=date, time=time, audio_success=audio_success,
         form_success=form_success)
+
+
+@doctor.route('/patient/<string:mr_num>/transcribe/medical-history',
+              methods=['GET', 'POST'])
+def transcribe_medical_history(mr_num: str) -> str:
+    pass
+
+
+@doctor.route('/patient/<string:mr_num>/transcribe/family-history',
+                methods=['GET', 'POST'])
+def transcribe_family_history(mr_num: str) -> str:
+    pass
+
+
+@doctor.route('/patient/<string:mr_num>/transcribe/socioeconomic-history',
+                methods=['GET', 'POST'])
+def transcribe_socioeconomic_history(mr_num: str) -> str:
+    pass
+
+
+@doctor.route('/patient/<string:mr_num>/transcribe/previous-pregnancy',
+                methods=['GET', 'POST'])
+def transcribe_previous_pregnancy(mr_num: str) -> str:
+    pass
+
+
+@doctor.route('/patient/<string:mr_num>/transcribe/condition-at-booking',
+                methods=['GET', 'POST'])
+def transcribe_condition_at_booking(mr_num: str) -> str:
+    pass
+
+
+@doctor.route('/patient/<string:mr_num>/transcribe/present-pregnancy',
+                methods=['GET', 'POST'])
+def transcribe_present_pregnancy(mr_num: str) -> str:
+    pass
+
+
+@doctor.route('/patient/<string:mr_num>/transcribe/proposed-plan',
+                methods=['GET', 'POST'])
+def transcribe_proposed_plan(mr_num: str) -> str:
+    pass
