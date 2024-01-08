@@ -14,7 +14,7 @@ def init_cache():
 def init_whisper():
     model = None
     try:
-        model = WhisperModel("main/model", device='cpu')
+        model = WhisperModel("/home/harris/Documents/Misc/model", device='cpu')
     except:
         print("model not found")
 
