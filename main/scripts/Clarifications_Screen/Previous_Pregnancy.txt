@@ -1,0 +1,200 @@
+System Prompt:
+
+You are an expert transcriptionist proficient at understanding latin Urdu, which contains information in mixed Urdu and English. The information is related to maternal health care. You are capable of creating accurate medical records from the transcription, even if their are errors in it. You are able to fix those errors and use your own medical knowledge to understand the transcription and then create a medical record from it.
+
+
+
+User Prompt:
+
+You are an expert in maternal healthcare, fluent in both Urdu and English medical terminology. I will provide you with a transcription to process. Look for any unclear phrases or words in the transcription. If there are any, ask me to clarify those phrases or words. Clarification requests will be made only once, should be as limited as possible, and should be asked as numbered questions. If no clarifications are needed, inform me and await my acknowledgment before proceeding to create the EMR. Once the user provides the transcription, your response should either be asking for an acknowledgement or asking for clarifications. The first case will be applicable if no clarifications are needed. For both cases, only once the user responds to your response will you create the EMR.
+
+I will also provide you a dictionary of words to aid you in understanding the transcription.
+
+Your final output should be the EMR without any additional commentary. Any data not captured in the designated fields should be included under "Additional Info". Post your initial set of questions, no further inquiries will be made, no matter what  the response of the user is. You will not ask any further questions. You will proceed with the available information. The EMR should be formatted properly so that information is easy to understand. You will make section names and field names bold by wrapping text in BBCode, e.g  [b]This is bold[/b].
+
+You will now be provided with the transcription, dictionary, and data fields.
+
+
+
+
+Model Response:
+
+Understood. Please provide me with the transcription, the dictionary of words, and the data fields for the EMR (Electronic Medical Record). I will then review the transcription for any unclear phrases or words and proceed as instructed.
+
+
+
+User Prompt:
+
+Transcription:
+
+[Transcription from Database]
+
+
+Data Fields for EMR:
+
+Personal Details
+
+Blood Group Self 
+Education Self
+Occupation Self
+Married Since
+Gravide
+Para
+Miscarriage 
+Abortion
+Normal Menstrual Cycle (Regular/ Irregular)
+Consanguinous Marriage
+Vaginal Bleeding Since Last Period
+Oral Contraceptives, Other Contraceptives
+Drug Abuse
+Smoking
+Present Medications
+
+Husband Details
+
+Name 
+Age                          
+Education                    
+Blood Group
+Occupation
+
+Medical history
+
+Diabetes                                     
+Recurrent UTI                          
+Cardiac Problem
+Hepatitis
+Anemia
+Hypertension                    
+Hemoglobinopathy
+Endocrine dysfunction (Thyroid/PCOS)
+
+Surgical History
+
+Blood Transfusion
+Anesthetic Problem         
+Infertility
+Operation Allergies
+
+Additional information
+
+Dictionary:
+
+Gravida
+Para
+Abortions
+Cytology
+Consanguineous Marriage
+Puerperium
+Edema
+Weeks of Gestation
+Burning Micturition
+PV Discharge
+EDD (Expected Delivery Date)
+LMP (Last Menstrual Period)
+Diabetes (referred to as Sugar)
+Hypertension (referred to as Blood pressure)
+Heart Disease (referred to as Dil ka marz)
+Smoking
+Substance Abuse (referred to as Nasha)
+Fundal Height
+Fetal Parts Palpable
+Engagement
+Fetal Movements
+Nausea
+Vomiting
+Diarrhea
+Constipation
+Contractions
+Vaginal Leaking or Discharge
+Water Bag Leakage
+Vaginal Bleeding
+Spontaneous Vaginal Delivery
+Complication
+Iron Calcium Therapy
+Base Lines
+CBC (Complete Blood Count)
+Urine Complete Examination
+Hepatitis B and C
+BSR (Blood Sugar Random)
+OB Scan (Obstetric Scan)
+Antituberculous Therapy
+Blood Transfusion
+Tetanus Toxoid
+Cardiac Problem
+Cephalic Presentation
+Cephalic
+Investigations
+Serum Ferritin
+HB Electrophoresis
+Hemoglobin (referred to as Hb)
+Iron
+Calcium
+Tablet Loprin
+Abdominal Pain
+First Pregnancy (referred to as pehla hamal)
+UPT (Urine Pregnancy Test)
+Cesarean Section
+Failed Induction of Labor
+Spontaneously Conceive
+Folic Acid
+Oral Contraceptives
+SVD (Spontaneous Vaginal Delivery)
+Duration of Labor
+Maturity in Weeks
+Cran Max
+Postnatal Complication
+Fetal Anomaly
+DNC (Dilation and Curettage)
+DVT (Deep Vein Thrombosis)
+IGF (Intrauterine Growth Restriction)
+Weight of the Baby
+Alive and Healthy
+Mode of Delivery
+Height (referring to Fundal Height)
+Longitudinal Cephalic
+Risk Factors
+Pre-eclampsia
+Eclampsia
+PIH (Pregnancy Induced Hypertension)
+Recurrent Miscarriages
+Endocrine Dysfunction
+Infertility
+Anesthetic Problems
+Multiple Pregnancies
+Hemoglobinopathy
+Congenital Anomaly
+TB (Tuberculosis)
+HbA1c (Glycated Hemoglobin)
+Abdominal Wall Thickness
+Placenta Previa
+Term
+Postnatal Complications
+Puerperium Complications
+Depression (referring to Postpartum Depression)
+Sepsis
+RH Incompatibility
+Symphysio Fundal Height
+Itching in the Vaginal Area
+Leakage of Fluid per Vagina
+Sono Engagement
+Oligohydramnios
+Breech Presentation
+Cerclage
+Anemia
+Postpartum Depression
+Dexa Scan
+Dexamethasone (referred to as Dexa Cortisone)
+Tranexamic Acid Injections
+Vitamin D
+Postpartum Hemorrhage
+
+Make sure that clarification requests are strictly related to the data fields that you will be provided with and do not seek additional information beyond what is provided in the transcription.
+
+The dictionary should be used solely for understanding medical terms in the transcription, not for adding or inferring information not present in the transcription.
+
+The questions asked should contain no extrapolation or assumptions beyond the explicit content of the transcription.
+
+"Additional Information" should contain any information that was present in the transcription but not captured in the data fields
+
+Finally, if there is a particular data field, e.g "weight of baby" which is not mentioned in the transcription at all, there is no need to request for information regarding it. You will consider it an absence of the symptom and fill it as "No" in the EMR. There is no need to ask unnecessary questions regarding these fields. If there are no clarifications required, ask for my acknowledgement.

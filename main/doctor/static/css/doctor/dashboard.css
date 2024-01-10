@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:display=swap');
+
+html,
+body {
+    height: 100%;
+    font-size: 11px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Enhanced styling for the navbar */
+.navbar {
+    background-color: #044d29;
+    /* A pleasant blue shade */
+    color: white;
+}
+
+.navbar a.navbar-brand {
+    color: white;
+}
+
+.navbar a.navbar-brand:hover {
+    color: #ddd;
+    /* Light grey for hover effect */
+}
+
+/* Center-aligning card content */
+.card-body {
+    text-align: center;
+}

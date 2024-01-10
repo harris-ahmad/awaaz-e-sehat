@@ -1,0 +1,404 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:display=swap');
+
+html,
+body {
+    height: 100%;
+    font-size: 11px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Enhanced styling for the navbar */
+.navbar {
+    background-color: #044d29;
+    /* A pleasant blue shade */
+    color: white;
+}
+
+.navbar a.navbar-brand {
+    color: white;
+}
+
+.navbar a.navbar-brand:hover {
+    color: #ddd;
+    /* Light grey for hover effect */
+}
+
+/* style the patient information heading */
+#patientInformationHeading {
+    /* make the text green */
+    color: #044d29;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.info-box {
+    background-color: #ffffff;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-top: 20px;
+    border: 1px solid rgba(0, 0, 0, .125);
+    margin-bottom: 20px;
+}
+
+.info-box-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, .125);
+    padding: 10px 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #044d29;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.info-box-content {
+    padding: 15px;
+}
+
+.info-box-content p {
+    margin-bottom: 0.5rem;
+}
+
+.info-box-content input {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    padding: 0.375rem 0.75rem;
+    width: 100%;
+}
+
+.info-box-content label {
+    font-weight: 600;
+}
+
+/* vitals */
+.vitals-header {
+    background-color: #f8f9fa;
+    border: 1px solid rgba(0, 0, 0, .125);
+    /* margin-top: 20px; */
+    padding: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #495057;
+    cursor: pointer;
+}
+
+
+.vitals-body {
+    padding: 15px;
+    background-color: white;
+    border: 1px solid #00000020;
+    border-top: none;
+}
+
+.vitals-table {
+    width: 100%;
+}
+
+.vitals-table th,
+.vitals-table td {
+    text-align: left;
+    padding: 8px;
+}
+
+.medicalHist-table {
+    width: 100%;
+}
+
+.medicalHist-table th,
+.medicalHist-table td {
+    text-align: left;
+    padding: 8px;
+}
+
+.medicalHist-table th {
+    font-weight: normal;
+}
+
+.fa-chevron-up,
+.fa-chevron-down {
+    float: right;
+}
+
+/* continue button */
+.continue-button {
+    background-color: #403636;
+    /* Bootstrap's secondary color */
+    border: none;
+    border-radius: 10px;
+    /* Rounded edges */
+    color: white;
+    padding: 15px 24px;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: background-color 0.2s;
+    /* Smooth transition for hover effect */
+    width: 90%;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    /* push the text to the center */
+    text-align: center;
+    font-weight: bold;
+}
+
+.continue-button:hover {
+    background-color: #5a6268;
+    /* A darker shade for hover state */
+    color: white;
+    text-decoration: none;
+}
+
+/* Centering the button for demonstration */
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.form-check-label {
+    margin-right: 20px;
+    /* Spacing between radio buttons and labels */
+}
+
+.form-check-input {
+    margin-right: 5px;
+    /* Spacing before the label text */
+}
+
+.hidden {
+    display: none;
+}
+
+.form-section {
+    margin-bottom: 15px;
+}
+
+.audio-recorder-container {
+    background-color: #f7f7f7;
+    border: 1px solid #d1d1d1;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.audio-recorder-buttons {
+    display: flex;
+    justify-content: center;
+    /* Center the buttons */
+    gap: 10px;
+    /* Space between buttons */
+    margin-bottom: 15px;
+}
+
+.audio-recorder-button {
+    background-color: transparent;
+    /* Transparent background */
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+    /* Smooth transform transition */
+    outline: none;
+    /* Remove focus outline */
+}
+
+.audio-recorder-button:hover {
+    transform: scale(1.1);
+    /* Slightly enlarge on hover */
+}
+
+.audio-recorder-button:active {
+    transform: scale(0.9);
+    /* Slightly shrink when active */
+}
+
+.audio-recorder-button i {
+    font-size: 24px;
+    /* Larger icon size */
+    color: #555;
+    /* Icon color */
+}
+
+#audioPlayback {
+    width: 100%;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+#timer {
+    text-align: center;
+    color: #555;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.progress {
+    height: 20px;
+    /* Adjust height */
+    background-color: #f8f9fa;
+    /* Light grey background */
+}
+
+.progress-bar {
+    background-color: #044d29;
+    /* Green shade to match the navbar */
+    transition: width 0.6s ease;
+    /* Smooth transition for width changes */
+}
+
+/* continue button */
+.continue-button {
+    background-color: #403636;
+    /* Bootstrap's secondary color */
+    border: none;
+    border-radius: 10px;
+    /* Rounded edges */
+    color: white;
+    padding: 15px 24px;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: background-color 0.2s;
+    /* Smooth transition for hover effect */
+    width: 90%;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    /* push the text to the center */
+    text-align: center;
+    font-weight: bold;
+}
+
+.continue-button:hover {
+    background-color: #5a6268;
+    /* A darker shade for hover state */
+    color: white;
+    text-decoration: none;
+}
+
+/* Centering the button for demonstration */
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+
+input[type="date"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* style for checkboxes */
+input[type="checkbox"] {
+    margin-right: 5px;
+    margin-left: 5px;
+    /* Spacing before the label text */
+    transform: scale(1.2);
+}
+
+input[type="radio"] {
+    margin-right: 5px;
+    margin-left: 5px;
+    /* enlargen */
+    transform: scale(1.2);
+}
+
+/* Style for the progress indicator */
+.progress-indicator {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    counter-reset: step;
+}
+
+.progress-indicator li {
+    text-align: center;
+    position: relative;
+}
+
+.progress-indicator li:before {
+    content: counter(step);
+    counter-increment: step;
+    width: 30px;
+    height: 30px;
+    border: 2px solid #ccc;
+    display: block;
+    text-align: center;
+    margin: 0 auto 10px auto;
+    border-radius: 50%;
+    line-height: 28px;
+    background-color: #fff;
+    color: #ccc;
+}
+
+.progress-indicator li:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #ccc;
+    top: 15px;
+    left: -50%;
+    z-index: -1;
+}
+
+.progress-indicator li:first-child:after {
+    content: none;
+}
+
+.progress-indicator li.completed:before {
+    border-color: #044d29;
+    /* Green border for completed step */
+    background-color: #044d29;
+    /* Green background for completed step */
+    color: white;
+    /* White text color for completed step */
+}
+
+.progress-indicator li.completed:after {
+    background-color: #044d29;
+    /* Green line for completed steps */
+}
+
+.progress-indicator li.incomplete:before {
+    border-color: #dc3545;
+    /* Red border for incomplete step */
+    color: #dc3545;
+    /* Red text color for incomplete step */
+}
+
+
+
+label {
+    font-size: 12px;
+}
+
+p {
+    font-size: 12px;
+}
+
+@media (max-width: 576px) {
+
+    .form-check-label,
+    .form-check-input {
+        margin-right: 10px;
+        /* Adjust spacing for smaller screens */
+    }
+}
+
+/* Adjustments for better responsiveness */
+@media (max-width: 768px) {
+
+    .detail-item strong,
+    .detail-item span {
+        display: inline-block;
+        margin-right: 10px;
+    }
+}

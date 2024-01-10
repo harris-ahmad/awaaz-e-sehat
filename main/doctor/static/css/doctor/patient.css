@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:display=swap');
+
+html,
+body {
+    height: 100%;
+    font-size: 11px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Enhanced styling for the navbar */
+.navbar {
+    background-color: #044d29;
+    /* A pleasant blue shade */
+    color: white;
+}
+
+.navbar a.navbar-brand {
+    color: white;
+}
+
+.navbar a.navbar-brand:hover {
+    color: #ddd;
+    /* Light grey for hover effect */
+}
+
+/* style the patient information heading */
+#patientInformationHeading {
+    /* make the text green */
+    color: #044d29;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.info-box {
+    background-color: #ffffff;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-top: 20px;
+    border: 1px solid rgba(0, 0, 0, .125);
+    margin-bottom: 20px;
+}
+
+.info-box-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, .125);
+    padding: 10px 15px;
+    font-size: 1rem;
+    /* color: #495057; */
+    color: #044d29;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.info-box-content {
+    padding: 15px;
+}
+
+.info-box-content p {
+    margin-bottom: 0.5rem;
+}
+
+.info-box-content input {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    padding: 0.375rem 0.75rem;
+    width: 100%;
+}
+
+.info-box-content label {
+    font-weight: 600;
+}
+
+/* vitals */
+.vitals-header {
+    background-color: #f8f9fa;
+    border: 1px solid rgba(0, 0, 0, .125);
+    /* margin-top: 20px; */
+    padding: 10px;
+    font-size: 1rem;
+    color: #495057;
+    cursor: pointer;
+}
+
+.vitals-body {
+    padding: 15px;
+    background-color: white;
+    border: 1px solid #00000020;
+    border-top: none;
+}
+
+.vitals-table {
+    width: 100%;
+}
+
+.vitals-table th,
+.vitals-table td {
+    text-align: left;
+    padding: 8px;
+}
+
+.medicalHist-table {
+    width: 100%;
+}
+
+.medicalHist-table th,
+.medicalHist-table td {
+    text-align: left;
+    padding: 8px;
+}
+
+.medicalHist-table th {
+    font-weight: normal;
+}
+
+.fa-chevron-up,
+.fa-chevron-down {
+    float: right;
+}
+
+/* continue button */
+.continue-button {
+    background-color: #403636;
+    /* Bootstrap's secondary color */
+    border: none;
+    border-radius: 10px;
+    /* Rounded edges */
+    color: white;
+    padding: 15px 24px;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: background-color 0.2s;
+    /* Smooth transition for hover effect */
+    width: 90%;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    /* push the text to the center */
+    text-align: center;
+    font-weight: bold;
+}
+
+.continue-button:hover {
+    background-color: #5a6268;
+    /* A darker shade for hover state */
+    color: white;
+    text-decoration: none;
+}
+
+/* Centering the button for demonstration */
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}

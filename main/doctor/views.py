@@ -5,7 +5,6 @@ from flask import (
     flash,
     session,
     request,
-    Response,
     make_response
 )
 
@@ -27,6 +26,32 @@ def dashboard():
         template_name_or_list='dashboard.html',
         form=form,
     )
+
+@doctor.route('/login', methods=['GET', 'POST'])
+def login():
+    response = make_response(
+        render_template(
+                    template_name_or_list='login.html',
+                    form=PatientSearchForm(),
+                ),
+                200,
+    )
+    response.headers['Content-Type'] = 'text/html'
+    return response
+
+
+@doctor.route('/register', methods=['GET', 'POST'])
+def register():
+    response = make_response(
+        render_template(
+                    template_name_or_list='register.html',
+                    form=PatientSearchForm(),
+                ),
+                200,
+    )
+    response.headers['Content-Type'] = 'text/html'
+    return response
+
 
 @doctor.route('/logout')
 def logout():
@@ -513,6 +538,7 @@ def get_cached_transcription(
 
     return transcription
 
+
 @cache.cached(timeout=50, key_prefix='clarification_response')
 def get_cached_clarification_response(
         file_path: str, transcription: str) -> str:
@@ -523,6 +549,7 @@ def get_cached_clarification_response(
     clarification_response = prompting_engine.generate_responses()
 
     return clarification_response
+
 
 @doctor.route('/patient/<string:mr_num>/transcribe/medical-history',
               methods=['GET', 'POST'])
@@ -535,13 +562,14 @@ def transcribe_medical_history(mr_num: str) -> str:
         audio_type='medical_history', medical_record_number=mr_num)
 
     clarification_response = get_cached_clarification_response(
-        file_path='scripts/Clarifications_Screen/Medical_History.txt',
+        file_path='main/scripts/Clarifications_Screen/Medical_History.txt',
         transcription=transcription)
 
     return render_template(
         'transcription_medical_history.html',
         transcription=transcription, mr_num=mr_num,
         response=clarification_response)
+
 
 @doctor.route('/patient/<string:mr_num>/transcribe/family-history',
                 methods=['GET', 'POST'])
@@ -554,7 +582,7 @@ def transcribe_family_history(mr_num: str) -> str:
         audio_type='family_history', medical_record_number=mr_num)
     
     clarification_response = get_cached_clarification_response(
-        file_path='scripts/Clarifications_Screen/Family_History.txt',
+        file_path='main/scripts/Clarifications_Screen/Family_History.txt',
         transcription=transcription)
     
     return render_template(
@@ -574,7 +602,7 @@ def transcribe_socioeconomic_history(mr_num: str) -> str:
         audio_type='socioeconomic_history', medical_record_number=mr_num)
     
     clarification_response = get_cached_clarification_response(
-        file_path='scripts/Clarifications_Screen/Socioeconomic_History.txt',
+        file_path='main/scripts/Clarifications_Screen/Socioeconomic_History.txt',
         transcription=transcription)
     
     return render_template(
@@ -594,14 +622,13 @@ def transcribe_previous_pregnancy(mr_num: str) -> str:
         audio_type='previous_pregnancy', medical_record_number=mr_num)
     
     clarification_response = get_cached_clarification_response(
-        file_path='scripts/Clarifications_Screen/Previous_Pregnancy.txt',
+        file_path='main/scripts/Clarifications_Screen/Previous_Pregnancy.txt',
         transcription=transcription)
     
     return render_template(
         'transcription_previous_pregnancy.html',
         transcription=transcription, mr_num=mr_num,
         response=clarification_response)
-
 
 
 @doctor.route('/patient/<string:mr_num>/transcribe/condition-at-booking',
@@ -615,7 +642,7 @@ def transcribe_condition_at_booking(mr_num: str) -> str:
         audio_type='condition_at_booking', medical_record_number=mr_num)
     
     clarification_response = get_cached_clarification_response(
-        file_path='scripts/Clarifications_Screen/Condition_at_Booking.txt',
+        file_path='main/scripts/Clarifications_Screen/Condition_at_Booking.txt',
         transcription=transcription)
     
     return render_template(
@@ -635,7 +662,7 @@ def transcribe_present_pregnancy(mr_num: str) -> str:
         audio_type='present_preg', medical_record_number=mr_num)
     
     clarification_response = get_cached_clarification_response(
-        file_path='scripts/Clarifications_Screen/Present_Pregnancy.txt',
+        file_path='main/scripts/Clarifications_Screen/Present_Pregnancy.txt',
         transcription=transcription)
     
     return render_template(
@@ -655,10 +682,11 @@ def transcribe_proposed_plan(mr_num: str) -> str:
         audio_type='proposed_plan', medical_record_number=mr_num)
     
     clarification_response = get_cached_clarification_response(
-        file_path='scripts/Clarifications_Screen/Proposed_Plan.txt',
+        file_path='main/scripts/Clarifications_Screen/Proposed_Plan.txt',
         transcription=transcription)
     
     return render_template(
         'transcription_proposed_plan.html',
         transcription=transcription, mr_num=mr_num,
         response=clarification_response)
+

@@ -3,11 +3,11 @@ import os
 import logging
 from flask_admin import Admin
 
-from .doctor import doctor, init_cache
+from .doctor import doctor
 from .views import main
+from .extensions import cache
 
 admin = Admin()
-cache = init_cache()
 
 def create_app():
     app = Flask(__name__)
@@ -28,8 +28,6 @@ def create_app():
     app.logger.info('app startup')
 
     admin.init_app(app)
-
     cache.init_app(app)
-    print("cache init")
 
     return app

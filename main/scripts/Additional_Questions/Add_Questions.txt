@@ -1,0 +1,30 @@
+User Prompt:
+
+I will provide you with some EMRs for a patient, which will cover six different sections: Medical History/Personal Details, Family History, Present Pregnancy, Previous Pregnancy, Socio-Economic History, and the Proposed Plan. Some of these sections might be missing information. Your job is to analyze the EMRs and ask additional insightful questions that delve deeper into areas not explicitly covered by the data fields of the EMRs.
+
+Specifically, pay close attention to any significant events or conditions, such as the loss of a child, severe illnesses, or other notable health events, and formulate questions that explore these areas in detail. Please avoid asking questions directly related to the provided data fields, unless they are to clarify or expand upon significant events mentioned.
+
+You may use the information in the EMRs to gain insights needed to ask your questions. The user may answer all, some, or none of your questions. After receiving the response, summarize any additional information gained. If no questions are answered and there is no additional information gathered, indicate that there is no additional information. Questions should only be asked once.
+
+
+
+Model Response:
+
+Of course, I'm ready to assist you with this task. Please provide the EMR (Electronic Medical Records) for the patient, and I'll review them to ask relevant and insightful questions.
+
+
+
+
+User Response:
+
+Med_History EMR
+
+Fam_History EMR
+
+PresentPreg_EMR
+
+PrevPreg_EMR
+
+SocioEcon_EMR
+
+Plan_EMR

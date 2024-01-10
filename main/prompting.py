@@ -63,6 +63,11 @@ class Prompting:
                 {"role": "user", "content": "\n\n".join(user_messages)})
 
         return messages
+    
+    def store_chat_history(self, messages):
+        with open(self.file_path, 'a', encoding='utf-8') as file:
+            for message in messages:
+                file.write(f"{message['role']}: {message['content']}\n\n")
 
     def response(self, messages):
         response = CLIENT.chat.completions.create(
@@ -76,7 +81,6 @@ class Prompting:
         final_response = ''
         first_chat = messages[0:3]
         first_chat_response = self.response(first_chat)
-        print('first response done')
         message_from_server = {
             'role': 'assistant',
             'content': first_chat_response.choices[0].message.content,
@@ -84,16 +88,13 @@ class Prompting:
         first_chat.append(message_from_server)
         messages = first_chat + messages[3:]
         final_response = self.response(messages).choices[0].message.content
-
-        # update messages with final response
         to_add = {
             'role': 'assistant',
             'content': final_response,
         }
         messages.append(to_add)
         self.messages = messages
-
-        print('final response done')
+        self.store_chat_history(messages)
         return final_response
     
     def update_after_clarification_question(self, answer):
@@ -105,4 +106,5 @@ class Prompting:
         messages.append(new_message)
         response = self.response(messages).choices[0].message.content
         self.messages = messages
+        self.store_chat_history(messages)
         return response

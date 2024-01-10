@@ -213,9 +213,9 @@
         <!-- add a left arrow button -->
         <a class="navbar-brand" href="/doctor/patient/{{mr_num}}" style="font-size:11px"><i
                 class="fas fa-arrow-left"></i> BACK</a>
-        <a class="navbar-brand" href="{{ url_for('doctor_dashboard') }}" style="font-size:11px">M.R NO: {{ mr_num }}</a>
+        <a class="navbar-brand" href="{{ url_for('doctor.dashboard') }}" style="font-size:11px">M.R NO: {{ mr_num }}</a>
         <div class="ml-auto">
-            <a href="{{ url_for('doctor_logout') }}" class="btn btn-outline-light my-2 my-sm-0">Logout</a>
+            <a href="{{ url_for('doctor.logout') }}" class="btn btn-outline-light my-2 my-sm-0">Logout</a>
         </div>
     </nav>
 
