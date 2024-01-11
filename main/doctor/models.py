@@ -4,10 +4,11 @@ import bcrypt
 from . import init_whisper
 from ..database import CLIENT as client
 from bson import binary
+from flask_login import UserMixin
 
 model = init_whisper()
 
-class Nurse():
+class Nurse(UserMixin):
     def __init__(self, employee_code, full_name, password, created_at=datetime.datetime.now()):
         super().__init__()
         self.employee_code = employee_code
@@ -130,8 +131,8 @@ class Patient:
     def __repr__(self):
         return f'<Patient {self.medical_record_number}>'
 
-class Doctor:
-    def __init__(self, employee_code, full_name, password, created_at=datetime.datetime.now()):
+class Doctor(UserMixin):
+    def __init__(self, employee_code, full_name="", password="", created_at=datetime.datetime.now()):
         self.employee_code = employee_code
         self.full_name = full_name
         self.created_at = created_at
@@ -175,7 +176,6 @@ class Doctor:
 
     def __repr__(self):
         return f'<Doctor {self.employee_code}>'
-
 
 
 class Audio:

@@ -8,18 +8,42 @@ from flask import (
     make_response
 )
 
+from flask_login import (
+    login_user, 
+    logout_user, 
+    login_required, 
+    current_user, 
+)
+
 import datetime
 import threading
 import os
+import bcrypt
 
 from . import doctor
 from .models import Patient, Audio, Doctor
 from ..database import DB
-from ..extensions import cache
+from ..extensions import cache, login_manager
 from ..prompting import Prompting
-from .forms import PatientSearchForm
+from .forms import PatientSearchForm, RegisterForm, LoginForm
+
+@login_manager.user_loader
+def load_user(employee_code):
+    role, _ = employee_code.split('_')
+    if role == 'doctor':
+        user = Doctor(employee_code=employee_code)
+        user = user.get_doctor(employee_code=employee_code)
+        if user:
+            return Doctor(
+                employee_code=employee_code,
+                full_name=user['full_name'],
+                password=user['password'],
+                created_at=user['created_at'],
+            )
+    return None
 
 @doctor.route('/dashboard')
+@login_required
 def dashboard():
     form = PatientSearchForm()
     return render_template(
@@ -29,10 +53,34 @@ def dashboard():
 
 @doctor.route('/login', methods=['GET', 'POST'])
 def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        employee_code = 'doctor_' + form.employee_code.data
+        password = form.password.data
+        doctor = Doctor(
+            employee_code=employee_code,
+            password=password,
+        )
+        doctor = doctor.get_doctor(employee_code=employee_code)
+        if doctor and bcrypt.checkpw(
+            password=password.encode('utf-8'), hashed_password=doctor['password']):
+            login_user(Doctor(
+                employee_code=employee_code,
+                full_name=doctor['full_name'],
+                password=password,
+                created_at=doctor['created_at'],
+            ))
+            session['employee_code'] = employee_code
+            flash('Logged in successfully', 'success')
+            return redirect(url_for('doctor.dashboard'))
+        else:
+            flash('Invalid username or password', 'danger')
+            return redirect(url_for('doctor.login'))
+        
     response = make_response(
         render_template(
                     template_name_or_list='login.html',
-                    form=PatientSearchForm(),
+                    form=form,
                 ),
                 200,
     )
@@ -42,10 +90,25 @@ def login():
 
 @doctor.route('/register', methods=['GET', 'POST'])
 def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        new_doctor = Doctor(
+            employee_code=form.employee_code.data,
+            full_name=form.full_name.data,
+            password=form.password.data,
+        )
+        existing_doctor = new_doctor.check_existing()
+        if existing_doctor:
+            flash('Doctor already exists!', 'danger')
+            return redirect(url_for('doctor.register'))
+        else:
+            new_doctor.add_doctor()
+            flash('Doctor added successfully!', 'success')
+            return redirect(url_for('doctor.login'))
     response = make_response(
         render_template(
                     template_name_or_list='register.html',
-                    form=PatientSearchForm(),
+                    form=form,
                 ),
                 200,
     )
@@ -53,13 +116,15 @@ def register():
     return response
 
 
-@doctor.route('/logout')
+@doctor.route('/logout', methods=['GET', 'POST'])
 def logout():
+    logout_user()
     session.pop('employee_code', None)
-    return redirect(url_for('doctor_dashboard'))
+    return redirect(url_for('main.index'))
 
 
-@doctor.route('/search')
+@doctor.route('/search', methods=['GET', 'POST'])
+@login_required
 def search():
     form = PatientSearchForm()
     if form.validate_on_submit():
@@ -72,18 +137,19 @@ def search():
 
         if patients.distinct('medical_record_number') == []:
                 flash('No patient found!', 'danger')
-                return redirect(url_for('doctor_dashboard'))
+                return redirect(url_for('doctor.dashboard'))
         else:
             return redirect(
                 url_for(
-                    'patient',
-                    medical_record_number=patients[0]
+                    'doctor.patient',
+                    mr_num=patients[0]
                     ['medical_record_number']))
         
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('doctor.dashboard'))
 
 
 @doctor.get('/patient/<string:mr_num>')
+@login_required
 def patient(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
     date, time = patient['created_at'].strftime(
@@ -104,6 +170,7 @@ def patient(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/record/medical-history',
               methods=['GET', 'POST'])
+@login_required
 def record_medical_history(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
     date, time = patient['created_at'].strftime(
@@ -207,6 +274,7 @@ def record_medical_history(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/record/family-history',
               methods=['GET', 'POST'])
+@login_required
 def record_family_history(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
     date, time = patient['created_at'].strftime(
@@ -248,6 +316,7 @@ def record_family_history(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/record/socioeconomic-history',
                 methods=['GET', 'POST'])
+@login_required
 def record_socioeconomic_history(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
     date, time = patient['created_at'].strftime(
@@ -289,6 +358,7 @@ def record_socioeconomic_history(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/record/previous-pregnancy',
                 methods=['GET', 'POST'])
+@login_required
 def record_previous_pregnancy(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
     date, time = patient['created_at'].strftime(
@@ -330,6 +400,7 @@ def record_previous_pregnancy(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/record/condition-at-booking',
               methods=['GET', 'POST'])
+@login_required 
 def record_condition_at_booking(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
     date, time = patient['created_at'].strftime(
@@ -371,6 +442,7 @@ def record_condition_at_booking(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/record/present-pregnancy',
               methods=['GET', 'POST'])
+@login_required
 def record_present_pregnancy(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
     date, time = patient['created_at'].strftime(
@@ -439,6 +511,7 @@ def record_present_pregnancy(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/record/proposed-plan',
               methods=['GET', 'POST'])
+@login_required
 def record_proposed_plan(mr_num: str) -> str:
     def set_lab_test(lab_test: str) -> None:
         if lab_test in patient:
@@ -553,6 +626,7 @@ def get_cached_clarification_response(
 
 @doctor.route('/patient/<string:mr_num>/transcribe/medical-history',
               methods=['GET', 'POST'])
+@login_required
 @cache.cached(timeout=50, key_prefix='transcription_medical_history')
 def transcribe_medical_history(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
@@ -573,6 +647,7 @@ def transcribe_medical_history(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/transcribe/family-history',
                 methods=['GET', 'POST'])
+@login_required
 @cache.cached(timeout=50, key_prefix='transcription_family_history')
 def transcribe_family_history(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
@@ -593,6 +668,7 @@ def transcribe_family_history(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/transcribe/socioeconomic-history',
                 methods=['GET', 'POST'])
+@login_required
 @cache.cached(timeout=50, key_prefix='transcription_socioeconomic_history')
 def transcribe_socioeconomic_history(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
@@ -613,6 +689,7 @@ def transcribe_socioeconomic_history(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/transcribe/previous-pregnancy',
                 methods=['GET', 'POST'])
+@login_required
 @cache.cached(timeout=50, key_prefix='transcription_previous_pregnancy')
 def transcribe_previous_pregnancy(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
@@ -633,6 +710,7 @@ def transcribe_previous_pregnancy(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/transcribe/condition-at-booking',
                 methods=['GET', 'POST'])
+@login_required
 @cache.cached(timeout=50, key_prefix='transcription_condition_at_booking')
 def transcribe_condition_at_booking(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
@@ -653,6 +731,7 @@ def transcribe_condition_at_booking(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/transcribe/present-pregnancy',
                 methods=['GET', 'POST'])
+@login_required
 @cache.cached(timeout=50, key_prefix='transcription_present_pregnancy')
 def transcribe_present_pregnancy(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
@@ -673,6 +752,7 @@ def transcribe_present_pregnancy(mr_num: str) -> str:
 
 @doctor.route('/patient/<string:mr_num>/transcribe/proposed-plan',
                 methods=['GET', 'POST'])
+@login_required
 @cache.cached(timeout=50, key_prefix='transcription_proposed_plan')
 def transcribe_proposed_plan(mr_num: str) -> str:
     patient = Patient.get_patient(mr_num)
@@ -689,4 +769,3 @@ def transcribe_proposed_plan(mr_num: str) -> str:
         'transcription_proposed_plan.html',
         transcription=transcription, mr_num=mr_num,
         response=clarification_response)
-

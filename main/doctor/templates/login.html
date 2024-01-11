@@ -1,27 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../static/css/doctor/login.css">
     <title>Login</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:display=swap');
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-signin {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        .modal-content {
+            background-color: #f8f9fa;
+            /* Light background */
+            color: #333;
+            /* Dark text */
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #dee2e6;
+            /* Light gray border */
+        }
+
+        .modal-footer {
+            border-top: 1px solid #dee2e6;
+            /* Light gray border */
+        }
+
+        label {
+            /* font-weight: bold; */
+            font-family: 'Open Sans', sans-serif;
+            font-size: 14px;
+        }
+
+        /* Media Queries for responsiveness */
+        @media screen and (max-width: 600px) {
+            .container {
+                width: 100%;
+                margin: 0;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
-
         {% with messages = get_flashed_messages(category_filter=["success"]) %}
-            {% if messages or login_successful %}
-                <script>
-                    window.onload = function() {
-                        $('#loginSuccessModal').modal('show');
-                    }
-                </script>
-            {% endif %}
+        {% if messages or login_successful %}
+        <script>
+            window.onload = function () {
+                $('#loginSuccessModal').modal('show');
+            }
+        </script>
+        {% endif %}
         {% endwith %}
 
         <!-- Login Success Modal -->
-        <div class="modal fade" id="loginSuccessModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal fade" id="loginSuccessModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+            aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -42,7 +96,7 @@
 
         <!-- <button type="button" onclick="$('#loginSuccessModal').modal('show')">Test Modal</button> -->
 
-        <form class="form-signin" method="POST" action="{{ url_for('doctor_login') }}">
+        <form class="form-signin" method="POST" action="{{ url_for('doctor.login') }}">
             <h1 class="h4 mb-5 font-weight-normal text-center">Log In</h1>
             {{ form.hidden_tag() }}
             <div class="form-group">
@@ -58,7 +112,7 @@
             </div>
             <p class="text-center">Don't have an account? <a href="/doctor/register">Sign up</a></p>
         </form>
-        
+
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

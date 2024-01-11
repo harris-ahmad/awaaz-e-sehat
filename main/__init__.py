@@ -5,7 +5,7 @@ from flask_admin import Admin
 
 from .doctor import doctor
 from .views import main
-from .extensions import cache
+from .extensions import cache, login_manager
 
 admin = Admin()
 
@@ -29,5 +29,10 @@ def create_app():
 
     admin.init_app(app)
     cache.init_app(app)
+    login_manager.init_app(app)
+    login_manager.blueprint_login_views = {
+        'doctor': '/doctor/login',
+        'nuse': '/nuse/login',
+    }
 
     return app
