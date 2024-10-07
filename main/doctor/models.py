@@ -1,7 +1,7 @@
 import datetime
 from flask import session
 import bcrypt
-from . import init_whisper
+from .utils import init_whisper
 from ..database import CLIENT as client
 from bson import binary
 from flask_login import UserMixin

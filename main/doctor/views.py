@@ -19,7 +19,7 @@ import threading
 import os
 import bcrypt
 
-from . import doctor
+from .blueprints import doctor
 from .models import Patient, Audio, Doctor
 from ..database import DB
 from ..extensions import cache, login_manager
