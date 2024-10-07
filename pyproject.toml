@@ -16,6 +16,7 @@ flask-admin = "^1.6.1"
 ruff = "^0.6.9"
 faster-whisper = "^1.0.3"
 bcrypt = "^4.2.0"
+flask-wtf = "^1.2.1"
 
 
 [build-system]
