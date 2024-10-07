@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "awaaz-e-sehat"
+version = "0.1.0"
+description = ""
+authors = ["Harris Ahmad <harris.ahmad@linq.io>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+Flask = "^3.0.3"
+openai = "^1.51.1"
+flask-caching = "^2.3.0"
+flask-login = "^0.6.3"
+pymongo = "^4.10.1"
+flask-admin = "^1.6.1"
+ruff = "^0.6.9"
+faster-whisper = "^1.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
