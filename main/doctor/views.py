@@ -112,7 +112,7 @@ def register():
             return redirect(url_for("doctor.login"))
     response = make_response(
         render_template(
-            template_name_or_list="register.html",
+            template_name_or_list="signup.html",
             form=form,
         ),
         200,

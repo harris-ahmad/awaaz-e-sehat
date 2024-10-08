@@ -11,6 +11,14 @@ admin = Admin()
 
 
 def create_app():
+    """
+    This is the factory function to create the flask app
+    
+    Keyword arguments:
+    argument -- None
+    Return: The configured flask app
+    """
+    
     app = Flask(__name__)
 
     app.config["SECRET_KEY"] = str(os.urandom(24).hex())
@@ -33,7 +41,6 @@ def create_app():
     login_manager.init_app(app)
     login_manager.blueprint_login_views = {
         "doctor": "/doctor/login",
-        "nuse": "/nuse/login",
     }
 
     return app
