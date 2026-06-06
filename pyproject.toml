@@ -6,7 +6,7 @@ authors = ["Harris Ahmad <harris.ahmad@linq.io>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "3.13"
 Flask = "^3.0.3"
 openai = "^1.51.1"
 flask-caching = "^2.3.0"
